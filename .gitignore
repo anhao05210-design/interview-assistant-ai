@@ -1,0 +1,8 @@
+node_modules/
+simple-agent/node_modules/
+emotion-service/pkgs/
+emotion-service/.deepface/
+__pycache__/
+*.pyc
+.env
+.DS_Store
