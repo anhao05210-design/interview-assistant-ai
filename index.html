@@ -1490,7 +1490,7 @@ textarea { resize: vertical; min-height: 88px; }
         <div class="job-target-summary" id="jobTargetSummary" hidden></div>
       </div>
 
-      <div class="card">
+      <div class="card" id="agentServiceCard">
         <div class="card-title">Agent 服务</div>
         <div class="field">
           <label class="field-label" for="serverUrl">Agent 服务地址</label>
@@ -1515,7 +1515,7 @@ textarea { resize: vertical; min-height: 88px; }
         <div id="agentStartLog" style="margin-top:8px;font-size:11px;color:var(--ink-muted);line-height:1.6;display:none;"></div>
       </div>
 
-      <div class="card">
+      <div class="card" id="deepfaceCard">
         <div class="card-title">DeepFace 情绪识别（可选）</div>
         <div class="field">
           <label class="field-label" for="deepfaceUrl">DeepFace 服务地址</label>
@@ -4950,6 +4950,31 @@ ${profile.resumeRaw}`;
   setMode(currentMode);
   checkServerHealth();
   setInterval(checkServerHealth, 15000);
+
+  // 线上环境（GitHub Pages 等）无法运行本地 Agent 服务，隐藏 Agent 入口
+  const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+  const isFile = location.protocol === 'file:';
+  if (!isLocal && !isFile) {
+    const agentBtn = document.querySelector('.mode-btn[data-mode="agent"]');
+    if (agentBtn) {
+      agentBtn.remove();
+    }
+    const agentSteps = document.getElementById('agentSteps');
+    if (agentSteps) agentSteps.remove();
+    const serverStatus = document.getElementById('serverStatus');
+    if (serverStatus) {
+      serverStatus.innerHTML = '<span class="server-dot"></span><span id="serverStatusText">线上环境：Agent 模式不可用，请使用「快速模式 + 配置 API Key」</span>';
+    }
+    const agentServiceCard = document.getElementById('agentServiceCard');
+    if (agentServiceCard) agentServiceCard.remove();
+    const deepfaceCard = document.getElementById('deepfaceCard');
+    if (deepfaceCard) deepfaceCard.remove();
+    // 强制回到快速模式
+    if (currentMode === 'agent') {
+      currentMode = 'quick';
+      localStorage.setItem(STORAGE.mode, 'quick');
+    }
+  }
 })();
 </script>
 </body>
