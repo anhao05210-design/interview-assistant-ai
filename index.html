@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>面试智答 · 自动回答助手</title>
+<title>校企面试智训 · AI 面试辅助与能力诊断系统</title>
+<meta name="description" content="面向校企教培场景的 AI 面试辅助系统，基于岗位胜任力模型生成定制面试流程，输出量化能力诊断报告与个性化提升方案。">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1136,9 +1137,9 @@ textarea { resize: vertical; min-height: 88px; }
 <div class="app">
   <aside class="sidebar">
     <div class="brand">
-      <div class="brand-mark">🎤</div>
-      <h1>面试智答</h1>
-      <p>输入问题，秒出结构化回答</p>
+      <div class="brand-mark">🎓</div>
+      <h1>校企面试智训</h1>
+      <p>面向校企教培的 AI 面试辅助系统 · 胜任力诊断 · 定制流程</p>
     </div>
     <nav class="nav">
       <button class="nav-btn active" data-panel="practice"><span class="icon">⚡</span>智能练习</button>
@@ -1159,7 +1160,7 @@ textarea { resize: vertical; min-height: 88px; }
     <section class="panel active" id="panel-practice">
       <header class="page-head">
         <h2>智能练习</h2>
-        <p>输入面试问题，基于你的背景自动匹配 PM 专属框架（RICE、KANO、AARRR 等 13 种），生成结构化回答</p>
+        <p>基于岗位胜任力模型，结合学生背景与目标岗位自动匹配回答框架（STAR、AARRR、RICE、KANO 等 13 种），生成结构化应答与思路拆解</p>
       </header>
 
       <div id="serverStatus" class="server-status offline">
@@ -1280,18 +1281,18 @@ textarea { resize: vertical; min-height: 88px; }
     <section class="panel" id="panel-interview">
       <header class="page-head">
         <h2>模拟面试</h2>
-        <p>AI 面试官基于你的简历提问，实时评估回答并生成能力雷达图</p>
+        <p>基于岗位胜任力模型定制面试流程，AI 面试官结合学生背景与目标岗位多轮纵深提问，实时量化评估五大能力维度</p>
       </header>
 
       <!-- 初始状态：设置 -->
       <div class="card" id="interviewSetup">
         <div class="interview-setup">
           <div class="setup-icon">🎯</div>
-          <h3>AI 模拟面试</h3>
-          <p>基于你的简历背景，AI 面试官将进行 5 轮深度提问</p>
-          <p class="setup-hint">包括：专业能力、表达能力、逻辑能力、情绪控制、自信程度五个维度</p>
+          <h3>岗位胜任力模拟面试</h3>
+          <p>依据目标岗位胜任力模型与学生背景，AI 面试官定制 5 轮深度提问流程</p>
+          <p class="setup-hint">五维量化评估：专业能力 · 表达能力 · 逻辑能力 · 情绪控制 · 自信程度</p>
           <div class="interview-resume-status empty" id="interviewResumeStatus">
-            <span>📄</span><span id="interviewResumeLabel">简历信息来自「设置」中的个人背景</span>
+            <span>📄</span><span id="interviewResumeLabel">学生背景信息来自「设置」中的个人背景与简历</span>
           </div>
           <div class="interview-mode-badge" id="interviewModeBadge" style="font-size:11px;color:var(--ink-muted);margin-top:4px;"></div>
           <!-- 模式选择 -->
@@ -1375,14 +1376,14 @@ textarea { resize: vertical; min-height: 88px; }
 
       <!-- 面试结果 -->
       <div class="card" id="interviewResult" hidden>
-        <div class="card-title">面试评估报告</div>
+        <div class="card-title">量化能力诊断报告</div>
 
         <!-- 总分 -->
         <div class="score-overview" id="scoreOverview"></div>
 
         <!-- 雷达图 -->
         <div class="card" style="margin-bottom:0;">
-          <div class="card-title">五维能力雷达图</div>
+          <div class="card-title">五维能力雷达诊断</div>
           <div class="radar-container" id="radarContainer"></div>
         </div>
 
@@ -1396,23 +1397,23 @@ textarea { resize: vertical; min-height: 88px; }
           <div class="emotion-distribution" id="emotionDistribution"></div>
         </div>
 
-        <!-- LLM 改进建议 -->
+        <!-- 个性化提升方案 -->
         <div class="report-section" id="reportSuggestions" hidden>
-          <h4>💡 AI 改进建议</h4>
+          <h4>💡 个性化能力提升方案</h4>
           <div class="report-suggestions" id="reportSuggestionList"></div>
         </div>
 
         <!-- 参考答案对比 -->
         <div class="ref-answer-section" id="refAnswerSection" hidden>
-          <h4 style="margin-bottom:16px;">📝 每题参考答案对比</h4>
+          <h4 style="margin-bottom:16px;">📝 每题最优答案与差距分析</h4>
           <div id="refAnswerList"></div>
         </div>
 
         <div class="interview-complete" style="margin-top:20px;">
           <div class="complete-icon">🎉</div>
-          <p style="color:var(--ink-muted);margin-bottom:16px;">面试完成！可以重新开始或查看详细分析</p>
+          <p style="color:var(--ink-muted);margin-bottom:16px;">面试完成！诊断报告与提升方案已生成，可重新开始或回顾全程</p>
           <div class="btn-row">
-            <button class="btn btn-primary" id="retryInterviewBtn">重新面试</button>
+            <button class="btn btn-primary" id="retryInterviewBtn">再次面试</button>
             <button class="btn btn-secondary" id="reviewInterviewBtn">回顾全程</button>
           </div>
         </div>
@@ -1422,8 +1423,8 @@ textarea { resize: vertical; min-height: 88px; }
     <!-- 战绩 -->
     <section class="panel" id="panel-records">
       <header class="page-head">
-        <h2>🏆 战绩</h2>
-        <p>查看历史面试记录、能力分析和 AI 评估报告</p>
+        <h2>🏆 战绩档案</h2>
+        <p>面试过程回顾 · 能力诊断分析 · 提升方案跟踪，量化记录学生成长轨迹</p>
       </header>
 
       <!-- 战绩列表 -->
@@ -1507,16 +1508,16 @@ textarea { resize: vertical; min-height: 88px; }
     <section class="panel" id="panel-settings">
       <header class="page-head">
         <h2>设置</h2>
-        <p>上传简历并配置 AI API（可选），智能练习和面试将根据简历内容提问</p>
+        <p>建立学生能力档案：上传简历、填写学生背景与求职目标，系统将基于岗位胜任力模型定制面试流程</p>
       </header>
 
       <div class="card">
-        <div class="card-title">📄 上传简历（智能练习和面试将根据简历内容提问）</div>
+        <div class="card-title">📄 上传简历（AI 将结合简历内容定制面试问题）</div>
         <div class="upload-zone" id="uploadZone">
           <input type="file" id="resumeFile" accept=".docx,.txt,.md">
           <div class="upload-icon">📄</div>
           <p><strong>点击或拖拽上传简历（支持 .docx / .txt / .md）</strong></p>
-          <p>上传后自动保存为面试背景，AI 将根据简历内容提问</p>
+          <p>上传后自动保存为学生能力档案，AI 将结合简历内容定制面试问题</p>
         </div>
         <div class="upload-result" id="uploadResult"></div>
 
@@ -1525,8 +1526,8 @@ textarea { resize: vertical; min-height: 88px; }
           <input type="text" id="jobCompany" placeholder="例如：字节跳动、腾讯、美团…（留空则生成通用面试题）">
         </div>
         <div class="field">
-          <label class="field-label" for="jobRequirements">岗位要求 / JD（可选）</label>
-          <textarea id="jobRequirements" rows="4" placeholder="粘贴目标岗位的 JD（职位描述），AI 将基于此生成针对性面试问题。&#10;例如：&#10;- 负责 AI 产品的需求分析和产品规划&#10;- 熟悉大模型技术栈，有 RAG 产品经验优先"></textarea>
+          <label class="field-label" for="jobRequirements">岗位要求 / JD（可选，胜任力模型来源）</label>
+          <textarea id="jobRequirements" rows="4" placeholder="粘贴目标岗位的 JD（职位描述），系统将基于此构建岗位胜任力模型并生成针对性面试问题。&#10;例如：&#10;- 负责 AI 产品的需求分析和产品规划&#10;- 熟悉大模型技术栈，有 RAG 产品经验优先"></textarea>
         </div>
         <div class="job-target-summary" id="jobTargetSummary" hidden></div>
       </div>
@@ -1534,11 +1535,11 @@ textarea { resize: vertical; min-height: 88px; }
       <!-- ===== 学生基本信息 ===== -->
       <div class="card student-info-card">
         <div class="card-title" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;" onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('.info-arrow').classList.toggle('rotated');">
-          <span>🎓 学生基本信息</span>
+          <span>🎓 学生背景档案</span>
           <span class="info-arrow" style="font-size:12px;transition:transform .2s;">▼</span>
         </div>
         <div class="student-info-body" style="padding-top:8px;">
-          <p style="margin:0 0 12px;font-size:13px;color:var(--ink-muted);">校企班学生专属：填写学业信息、社团经历、竞赛与实践经历，AI 将结合这些信息生成更具针对性的面试问题。</p>
+          <p style="margin:0 0 12px;font-size:13px;color:var(--ink-muted);">校企教培专属：建立学生能力档案（学业表现、社团实践、竞赛经历、企业实习），AI 将结合岗位胜任力模型生成定制化面试流程与诊断报告。</p>
 
           <!-- 学业信息 -->
           <div class="info-subsection">
@@ -1715,13 +1716,13 @@ textarea { resize: vertical; min-height: 88px; }
 
           <!-- 快速入门 -->
           <div class="help-section">
-            <div class="help-section-title">🚀 快速入门</div>
+            <div class="help-section-title">🚀 教培流程快速入门</div>
             <ol class="help-steps">
-              <li><strong>上传简历</strong> — 在设置中上传你的简历（.docx / .txt / .md），AI 将根据简历内容出题</li>
+              <li><strong>建立档案</strong> — 在设置中上传简历（.docx / .txt / .md）并填写学生背景档案（学业、社团、竞赛、实习）与求职目标</li>
               <li><strong>配置 API</strong> — 填写 API Key、模型、API 地址（详见下方配置指南），或直接使用本地模板</li>
-              <li><strong>智能练习</strong> — 输入面试问题或快速选题，AI 根据简历生成个性化回答</li>
-              <li><strong>模拟面试</strong> — 启动 5 题模拟面试，支持文字/语音/视频三种模式，结束后生成评分报告</li>
-              <li><strong>追问树</strong> — 回答后自动生成 2-3 层追问，模拟面试纵深压力</li>
+              <li><strong>智能练习</strong> — 输入面试问题或快速选题，AI 基于岗位胜任力模型匹配回答框架，生成结构化应答</li>
+              <li><strong>模拟面试</strong> — 启动定制面试流程（5 轮纵深提问），支持文字/语音/视频三种模式，结束输出量化诊断报告</li>
+              <li><strong>诊断提升</strong> — 查看五维能力诊断雷达图与个性化提升方案，并在战绩档案中跟踪成长轨迹</li>
             </ol>
           </div>
 
@@ -3827,6 +3828,8 @@ ${hasStudentInfo ? `- 候选人是校企班在校/应届学生，可以考察其
   let speechAutoSubmitTimer = null;
   let speechCountdownInterval = null;
   const SPEECH_SILENCE_TIMEOUT = 2500;
+  let speechRestartCount = 0; // 连续重启次数，防止死循环
+  const SPEECH_MAX_RESTART = 3;
 
   function initSpeechRecognition() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -3842,7 +3845,7 @@ ${hasStudentInfo ? `- 候选人是校企班在校/应届学生，可以考察其
   function startVoiceInput() {
     if (!speechRecognition) {
       speechRecognition = initSpeechRecognition();
-      if (!speechRecognition) { showToast('当前浏览器不支持语音识别，请使用 Chrome'); return; }
+      if (!speechRecognition) { showToast('当前浏览器不支持语音识别，请使用 Chrome 浏览器'); return; }
     }
     const COUNTDOWN_SEC = 3;
     let countdownVal = 0;
@@ -3896,20 +3899,53 @@ ${hasStudentInfo ? `- 候选人是校企班在校/应届学生，可以考察其
       }
     };
     speechRecognition.onerror = (e) => {
+      // 忽略可恢复的常见错误，不打断识别
       if (e.error === 'no-speech' || e.error === 'aborted') return;
-      showToast('语音识别异常：' + e.error); stopVoiceInput();
+      // already-started / network 是瞬时错误，不停止识别
+      if (e.error === 'already-started' || e.error === 'network') return;
+      // 权限/设备问题才真正停止
+      if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+        showToast('麦克风权限被拒绝，请在浏览器地址栏允许麦克风访问');
+        stopVoiceInput();
+        return;
+      }
+      if (e.error === 'audio-capture') {
+        showToast('未检测到麦克风设备，请检查麦克风连接');
+        stopVoiceInput();
+        return;
+      }
+      // 其他错误仅提示，不停止，让 onend 自动重启
+      showToast('语音识别提示：' + e.error);
     };
     speechRecognition.onend = () => {
-      if (interviewState.speechActive) { try { speechRecognition.start(); } catch {} }
+      // 仅在用户未主动停止时自动重启，且限制重启次数防止死循环
+      if (interviewState.speechActive) {
+        if (speechRestartCount < SPEECH_MAX_RESTART) {
+          speechRestartCount++;
+          try { speechRecognition.start(); } catch {}
+        } else {
+          // 超过重启上限，停止并提示
+          interviewState.speechActive = false;
+          showToast('语音识别多次中断，已停止。请点击麦克风重新开始');
+          document.getElementById('voiceIndicator').hidden = true;
+          document.getElementById('voiceToggleBtn').textContent = '🎤 开始语音';
+        }
+      }
     };
     try {
+      speechRestartCount = 0; // 启动时重置重启计数
       speechRecognition.start();
       interviewState.speechActive = true;
       document.getElementById('voiceIndicator').hidden = false;
       document.getElementById('voiceToggleBtn').textContent = '🔇 停止语音';
       document.getElementById('voiceToggleBtn').hidden = false;
       showToast('语音识别已开启，静音' + COUNTDOWN_SEC + '秒后自动提交');
-    } catch (e) { showToast('语音启动失败：' + e.message); }
+    } catch (e) {
+      // already-started 不算错误，保持识别继续
+      if (!/already started/i.test(e.message)) {
+        showToast('语音启动失败：' + e.message);
+      }
+    }
   }
 
   function stopVoiceInput() {
