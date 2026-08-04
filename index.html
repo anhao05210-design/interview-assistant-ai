@@ -242,7 +242,47 @@ textarea { resize: vertical; min-height: 88px; }
 .help-table td a { color: var(--accent); }
 .help-tip { background: #fef3c7; border-left: 3px solid #d97706; padding: 8px 12px; border-radius: 4px; font-size: 12px; margin-top: 8px; color: #92400e; }
 .help-arrow.rotated { transform: rotate(180deg); }
+
+/* Student info card */
+.student-info-card .info-subsection { margin: 14px 0; padding: 12px 14px; background: var(--navy-soft); border-radius: 8px; border-left: 3px solid var(--accent); }
+.student-info-card .info-subsection-title { font-weight: 600; font-size: 14px; margin-bottom: 10px; color: var(--ink); }
+.student-info-card .info-arrow.rotated { transform: rotate(180deg); }
+.student-info-card textarea { font-size: 13px; line-height: 1.6; }
 .card-title .help-arrow { transition: transform .2s; }
+
+/* Position selector */
+.position-selector { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; padding: 12px; background: var(--navy-soft); border-radius: 8px; }
+.position-chip { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border: 1px solid var(--line); border-radius: 20px; background: #fff; color: var(--ink); font-size: 13px; cursor: pointer; transition: all .15s; }
+.position-chip:hover { border-color: var(--accent); color: var(--accent); }
+.position-chip.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+.position-chip .position-icon { font-size: 15px; }
+.position-chip .position-label { font-weight: 500; }
+
+/* Online bank card */
+.online-bank-card .online-arrow.rotated { transform: rotate(180deg); }
+.external-links { margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--line); }
+.external-links-title { font-size: 13px; color: var(--ink-muted); margin-bottom: 8px; }
+.external-links-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.external-link-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 16px; background: #fff; color: var(--ink); font-size: 12px; text-decoration: none; transition: all .15s; }
+.external-link-chip:hover { border-color: var(--accent); color: var(--accent); background: var(--navy-soft); }
+.external-link-chip .el-icon { font-size: 14px; }
+
+.online-results { margin-top: 14px; }
+.online-results-header { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 10px 12px; background: linear-gradient(135deg, #dbeafe, #ede9fe); border-radius: 8px; margin-bottom: 10px; }
+.or-badge { background: var(--accent); color: #fff; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+.or-meta { font-size: 13px; color: var(--ink); font-weight: 500; }
+.or-hint { font-size: 12px; color: var(--ink-muted); margin-left: auto; }
+.online-results-list { display: flex; flex-direction: column; gap: 8px; max-height: 360px; overflow-y: auto; padding-right: 4px; }
+.online-q-item { display: flex; gap: 10px; padding: 10px 12px; background: var(--navy-soft); border-radius: 8px; border-left: 3px solid var(--accent); }
+.oq-num { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+.oq-body { flex: 1; min-width: 0; }
+.oq-text { font-size: 13px; color: var(--ink); line-height: 1.5; }
+.oq-source { font-size: 11px; color: var(--ink-muted); margin-top: 4px; }
+.oq-dim { display: inline-block; margin-top: 4px; padding: 1px 8px; background: #fff; border: 1px solid var(--line); border-radius: 10px; font-size: 11px; color: var(--ink-muted); }
+
+/* Online chip in quick chips */
+.chip-online { border-color: var(--accent); color: var(--accent); background: #fff7ed; }
+.chip-divider { width: 100%; font-size: 12px; color: var(--ink-muted); padding: 8px 0 4px; border-top: 1px dashed var(--line); margin-top: 6px; }
 
 /* Answer area */
 .answer-box {
@@ -1217,8 +1257,9 @@ textarea { resize: vertical; min-height: 88px; }
     <section class="panel" id="panel-bank">
       <header class="page-head">
         <h2>面试题库</h2>
-        <p>产品经理 & 通用行为面试高频题，点击即可练习</p>
+        <p>🎯 产品经理 · 产品规划、需求分析、项目推动，点击即可练习</p>
       </header>
+      <div class="position-selector" id="positionSelector"></div>
       <div class="filter-row" id="categoryFilters"></div>
       <div class="q-list" id="questionList"></div>
     </section>
@@ -1490,6 +1531,120 @@ textarea { resize: vertical; min-height: 88px; }
         <div class="job-target-summary" id="jobTargetSummary" hidden></div>
       </div>
 
+      <!-- ===== 学生基本信息 ===== -->
+      <div class="card student-info-card">
+        <div class="card-title" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;" onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('.info-arrow').classList.toggle('rotated');">
+          <span>🎓 学生基本信息</span>
+          <span class="info-arrow" style="font-size:12px;transition:transform .2s;">▼</span>
+        </div>
+        <div class="student-info-body" style="padding-top:8px;">
+          <p style="margin:0 0 12px;font-size:13px;color:var(--ink-muted);">校企班学生专属：填写学业信息、社团经历、竞赛与实践经历，AI 将结合这些信息生成更具针对性的面试问题。</p>
+
+          <!-- 学业信息 -->
+          <div class="info-subsection">
+            <div class="info-subsection-title">📚 学业信息</div>
+            <div class="settings-grid">
+              <div class="field">
+                <label class="field-label" for="stuSchool">学校</label>
+                <input type="text" id="stuSchool" placeholder="例如：太原理工大学">
+              </div>
+              <div class="field">
+                <label class="field-label" for="stuMajor">专业</label>
+                <input type="text" id="stuMajor" placeholder="例如：计算机科学与技术">
+              </div>
+              <div class="field">
+                <label class="field-label" for="stuGrade">年级</label>
+                <input type="text" id="stuGrade" placeholder="例如：大三 / 2023级">
+              </div>
+              <div class="field">
+                <label class="field-label" for="stuGpa">绩点（GPA）</label>
+                <input type="text" id="stuGpa" placeholder="例如：3.6 / 4.0">
+              </div>
+              <div class="field">
+                <label class="field-label" for="stuRank">综合排名</label>
+                <input type="text" id="stuRank" placeholder="例如：专业前 10% / 5/50">
+              </div>
+            </div>
+            <div class="field">
+              <label class="field-label" for="stuCourses">主修课程及成绩</label>
+              <textarea id="stuCourses" rows="3" placeholder="列出主修课程及成绩，AI 可能会针对专业课基础出题&#10;例如：&#10;数据结构 92 · 操作系统 88 · 数据库 90 · 产品设计 85"></textarea>
+            </div>
+          </div>
+
+          <!-- 社团经历 -->
+          <div class="info-subsection">
+            <div class="info-subsection-title">🏛️ 社团经历</div>
+            <div class="field">
+              <label class="field-label" for="stuClubs">校内社团 / 学生组织经历</label>
+              <textarea id="stuClubs" rows="3" placeholder="担任的职务、组织的活动、取得的成果&#10;例如：&#10;校学生会外联部 副部长（2023-2024）&#10;组织校园招聘双选会，对接 30+ 企业"></textarea>
+            </div>
+          </div>
+
+          <!-- 竞赛经历 -->
+          <div class="info-subsection">
+            <div class="info-subsection-title">🏆 在校竞赛经历</div>
+            <div class="field">
+              <label class="field-label" for="stuCompetitions">学科竞赛 / 创新创业比赛</label>
+              <textarea id="stuCompetitions" rows="3" placeholder="比赛名称、获奖等级、承担角色&#10;例如：&#10;互联网+大学生创新创业大赛 省赛银奖 · 项目负责人&#10;全国大学生数学建模竞赛 省级一等奖"></textarea>
+            </div>
+          </div>
+
+          <!-- 企业实践经历 -->
+          <div class="info-subsection">
+            <div class="info-subsection-title">💼 企业实践经历</div>
+            <div class="field">
+              <label class="field-label" for="stuInternships">实习 / 项目实践</label>
+              <textarea id="stuInternships" rows="3" placeholder="公司、岗位、时间、主要工作与成果&#10;例如：&#10;字节跳动 · 产品实习生（2024.07-2024.09）&#10;负责某 AI 产品的需求调研与原型设计"></textarea>
+            </div>
+          </div>
+
+          <div class="btn-row" style="margin-top:8px;">
+            <button class="btn btn-primary" id="saveStudentInfoBtn">💾 保存学生信息</button>
+            <button class="btn btn-ghost" id="clearStudentInfoBtn" style="font-size:12px;">清空</button>
+            <span id="studentInfoStatus" style="font-size:12px;color:var(--ink-muted);"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 联网题库 ===== -->
+      <div class="card online-bank-card">
+        <div class="card-title" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;" onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('.online-arrow').classList.toggle('rotated');">
+          <span>🌐 联网题库（按公司 + 岗位搜索）</span>
+          <span class="online-arrow" style="font-size:12px;transition:transform .2s;">▼</span>
+        </div>
+        <div class="online-bank-body" style="padding-top:8px;">
+          <p style="margin:0 0 12px;font-size:13px;color:var(--ink-muted);">
+            输入目标公司和岗位，AI 将基于网络公开面经（牛客、看准、脉脉等）生成该公司该岗位的真实面试题，并自动融入智能练习和模拟面试。
+          </p>
+
+          <div class="settings-grid">
+            <div class="field">
+              <label class="field-label" for="searchCompany">搜索公司</label>
+              <input type="text" id="searchCompany" placeholder="例如：字节跳动、腾讯、美团">
+            </div>
+            <div class="field">
+              <label class="field-label" for="searchPosition">搜索岗位</label>
+              <input type="text" id="searchPosition" placeholder="例如：产品经理、前端开发、算法工程师">
+            </div>
+          </div>
+
+          <div class="btn-row" style="margin-top:8px;">
+            <button class="btn btn-primary" id="searchOnlineBtn">🔍 联网搜索面试题</button>
+            <button class="btn btn-ghost" id="clearOnlineBtn" style="font-size:12px;">清空题库</button>
+            <span id="onlineSearchStatus" style="font-size:12px;color:var(--ink-muted);"></span>
+          </div>
+
+          <!-- 外部面试题网站快捷入口（真正联网） -->
+          <div class="external-links">
+            <div class="external-links-title">🔗 外部面试题网站（点击直接访问）</div>
+            <div class="external-links-row" id="externalLinks"></div>
+          </div>
+
+          <!-- 搜索结果展示 -->
+          <div class="online-results" id="onlineResults" hidden></div>
+        </div>
+      </div>
+
       <div class="card" id="agentServiceCard">
         <div class="card-title">Agent 服务</div>
         <div class="field">
@@ -1634,9 +1789,14 @@ textarea { resize: vertical; min-height: 88px; }
                   <td>对照上表填写正确的模型名（如 DeepSeek 用 <code>deepseek-chat</code>，非 <code>gpt-4o-mini</code>）</td>
                 </tr>
                 <tr>
-                  <td><code>Insufficient Balance</code></td>
-                  <td>账户余额不足</td>
-                  <td>登录 API 提供商平台充值</td>
+                  <td><code>400 Bad Request</code></td>
+                  <td>请求格式错误（模型名错/参数缺失）</td>
+                  <td>检查模型名是否正确、是否为空；对照帮助中心表格确认该提供商的推荐模型名</td>
+                </tr>
+                <tr>
+                  <td><code>402 Payment Required</code> / <code>Insufficient Balance</code></td>
+                  <td>账户余额不足或需付费</td>
+                  <td>登录 API 提供商平台充值或领取免费额度（DeepSeek/千问/硅基流动新用户均有赠送）</td>
                 </tr>
                 <tr>
                   <td>返回内容为空</td>
@@ -1671,47 +1831,331 @@ textarea { resize: vertical; min-height: 88px; }
     server: 'interview_server_v1',
     launcher: 'interview_launcher_v1',
     mode: 'interview_mode_v1',
-    records: 'interview_records_v1'
+    records: 'interview_records_v1',
+    onlineBank: 'interview_online_bank_v1'  // 联网题库
   };
 
-  const CATEGORIES = ['全部', '自我介绍', '项目经历', '行为面试', '产品思维', '职业规划', '压力应对', '反问环节'];
+  const CATEGORIES = ['全部', '自我介绍', '项目经历', '行为面试', '产品思维', '职业规划', '压力应对', '反问环节', '技术基础', '业务理解'];
 
-  const QUESTION_BANK = [
-    { cat: '自我介绍', q: '请做一个 1-2 分钟的自我介绍' },
-    { cat: '自我介绍', q: '你为什么适合这个岗位？' },
-    { cat: '自我介绍', q: '你的核心竞争力是什么？' },
-    { cat: '项目经历', q: '介绍一个你负责或深度参与的产品项目' },
-    { cat: '项目经历', q: '项目中遇到的最大挑战是什么？如何解决的？' },
-    { cat: '项目经历', q: '如果重新做这个项目，你会怎么改进？' },
-    { cat: '行为面试', q: '说一个你与研发产生分歧的经历，最后怎么处理的？' },
-    { cat: '行为面试', q: '描述一次你在 deadline 压力下交付的经历' },
-    { cat: '行为面试', q: '有没有失败的经历？你从中学到了什么？' },
-    { cat: '行为面试', q: '你如何推动一个跨部门项目落地？' },
-    { cat: '产品思维', q: '如何定义一个产品的 MVP？' },
-    { cat: '产品思维', q: '如何评估一个功能是否该做？' },
-    { cat: '产品思维', q: '你如何做竞品分析？' },
-    { cat: '产品思维', q: 'DAU 下降了，你会怎么排查？' },
-    { cat: '产品思维', q: '如何平衡用户体验与商业目标？' },
-    { cat: '产品思维', q: '谈谈你对 AI 产品的理解，以及 AI PM 和传统 PM 的区别' },
-    { cat: '产品思维', q: 'RAG 和 Fine-tuning 分别适合什么场景？' },
-    { cat: '职业规划', q: '你的 3-5 年职业规划是什么？' },
-    { cat: '职业规划', q: '为什么选择产品经理这个方向？' },
-    { cat: '职业规划', q: '你最近在学习什么？为什么？' },
-    { cat: '压力应对', q: '如何处理多个需求同时到来的优先级冲突？' },
-    { cat: '压力应对', q: '当数据与你的直觉相悖时，你怎么决策？' },
-    { cat: '压力应对', q: '被领导或同事质疑方案时，你会怎么做？' },
-    { cat: '反问环节', q: '你有什么想问我们的？（团队/业务/成长）' },
-    { cat: '反问环节', q: '这个岗位最大的挑战是什么？' },
-    { cat: '反问环节', q: '团队目前的产品阶段和核心目标是什么？' }
-  ];
+  // 多职位题库：每个职位包含专属问题 + 通用问题
+  const POSITION_BANK = {
+    pm: {
+      label: '产品经理',
+      icon: '🎯',
+      desc: '产品规划、需求分析、项目推动',
+      quickQuestions: ['请做一个自我介绍', '介绍一个产品项目', '与研发分歧怎么处理', '你的职业规划', 'AI 产品理解'],
+      questions: [
+        { cat: '自我介绍', q: '请做一个 1-2 分钟的自我介绍' },
+        { cat: '自我介绍', q: '你为什么适合产品经理这个岗位？' },
+        { cat: '自我介绍', q: '你的核心竞争力是什么？' },
+        { cat: '项目经历', q: '介绍一个你负责或深度参与的产品项目' },
+        { cat: '项目经历', q: '项目中遇到的最大挑战是什么？如何解决的？' },
+        { cat: '项目经历', q: '如果重新做这个项目，你会怎么改进？' },
+        { cat: '行为面试', q: '说一个你与研发产生分歧的经历，最后怎么处理的？' },
+        { cat: '行为面试', q: '描述一次你在 deadline 压力下交付的经历' },
+        { cat: '行为面试', q: '有没有失败的经历？你从中学到了什么？' },
+        { cat: '行为面试', q: '你如何推动一个跨部门项目落地？' },
+        { cat: '产品思维', q: '如何定义一个产品的 MVP？' },
+        { cat: '产品思维', q: '如何评估一个功能是否该做？' },
+        { cat: '产品思维', q: '你如何做竞品分析？' },
+        { cat: '产品思维', q: 'DAU 下降了，你会怎么排查？' },
+        { cat: '产品思维', q: '如何平衡用户体验与商业目标？' },
+        { cat: '产品思维', q: '谈谈你对 AI 产品的理解，以及 AI PM 和传统 PM 的区别' },
+        { cat: '产品思维', q: 'RAG 和 Fine-tuning 分别适合什么场景？' },
+        { cat: '职业规划', q: '你的 3-5 年职业规划是什么？' },
+        { cat: '职业规划', q: '为什么选择产品经理这个方向？' },
+        { cat: '职业规划', q: '你最近在学习什么？为什么？' },
+        { cat: '压力应对', q: '如何处理多个需求同时到来的优先级冲突？' },
+        { cat: '压力应对', q: '当数据与你的直觉相悖时，你怎么决策？' },
+        { cat: '压力应对', q: '被领导或同事质疑方案时，你会怎么做？' },
+        { cat: '反问环节', q: '你有什么想问我们的？（团队/业务/成长）' },
+        { cat: '反问环节', q: '这个岗位最大的挑战是什么？' },
+        { cat: '反问环节', q: '团队目前的产品阶段和核心目标是什么？' }
+      ]
+    },
+    frontend: {
+      label: '前端开发',
+      icon: '💻',
+      desc: 'HTML/CSS/JS、框架、性能优化',
+      quickQuestions: ['自我介绍', '介绍一个前端项目', 'Vue 和 React 区别', '前端性能优化', '你的职业规划'],
+      questions: [
+        { cat: '自我介绍', q: '请做一个 1-2 分钟的自我介绍' },
+        { cat: '自我介绍', q: '你为什么选择前端方向？' },
+        { cat: '自我介绍', q: '你的技术栈和核心竞争力是什么？' },
+        { cat: '项目经历', q: '介绍一个你主导的前端项目，技术选型是怎样的？' },
+        { cat: '项目经历', q: '项目中遇到过最难的 bug 是什么？如何定位和解决？' },
+        { cat: '项目经历', q: '你做过的项目有哪些性能优化点？效果如何？' },
+        { cat: '技术基础', q: '说说 Vue 和 React 的核心区别及各自的适用场景' },
+        { cat: '技术基础', q: '浏览器输入 URL 到页面渲染发生了什么？' },
+        { cat: '技术基础', q: '闭包是什么？有哪些实际应用场景？' },
+        { cat: '技术基础', q: '事件循环（Event Loop）机制是怎样的？宏任务和微任务的区别？' },
+        { cat: '技术基础', q: 'HTTP/1.1、HTTP/2、HTTP/3 有哪些区别？' },
+        { cat: '技术基础', q: '前端跨域有哪些解决方案？CORS 原理是什么？' },
+        { cat: '技术基础', q: '虚拟 DOM 是什么？Diff 算法的核心思路？' },
+        { cat: '产品思维', q: '如何从前端角度提升用户体验？' },
+        { cat: '产品思维', q: '首屏加载慢，你会从哪些方面优化？' },
+        { cat: '行为面试', q: '和后端/产品产生接口分歧时怎么处理？' },
+        { cat: '行为面试', q: '描述一次线上事故的处理过程' },
+        { cat: '职业规划', q: '你的技术成长路线是怎样的？' },
+        { cat: '压力应对', q: '需求频繁变更，你如何保证代码质量？' },
+        { cat: '反问环节', q: '团队的技术栈和前端团队规模？' }
+      ]
+    },
+    backend: {
+      label: '后端开发',
+      icon: '⚙️',
+      desc: '服务端、数据库、分布式系统',
+      quickQuestions: ['自我介绍', '介绍一个后端项目', '数据库索引原理', '高并发如何处理', '你的职业规划'],
+      questions: [
+        { cat: '自我介绍', q: '请做一个 1-2 分钟的自我介绍' },
+        { cat: '自我介绍', q: '你的后端技术栈和擅长领域是什么？' },
+        { cat: '项目经历', q: '介绍一个你负责的后端系统，架构是怎样的？' },
+        { cat: '项目经历', q: '系统中遇到过最大的性能瓶颈是什么？如何解决？' },
+        { cat: '项目经历', q: '你设计过的高并发场景是怎样的？QPS 多少？' },
+        { cat: '技术基础', q: 'MySQL 索引底层原理是什么？什么情况下索引会失效？' },
+        { cat: '技术基础', q: 'Redis 有哪些数据结构？缓存穿透/击穿/雪崩怎么解决？' },
+        { cat: '技术基础', q: '分布式锁有哪些实现方式？各有什么优缺点？' },
+        { cat: '技术基础', q: '消息队列（Kafka/RabbitMQ）如何保证消息不丢失？' },
+        { cat: '技术基础', q: 'CAP 理论是什么？BASE 理论呢？' },
+        { cat: '技术基础', q: '微服务架构的优缺点？服务注册发现怎么做？' },
+        { cat: '技术基础', q: '如何设计一个秒杀系统？' },
+        { cat: '产品思维', q: '接口响应慢，你会从哪些层面排查？' },
+        { cat: '行为面试', q: '和前端产生接口分歧时怎么处理？' },
+        { cat: '行为面试', q: '描述一次线上故障的排查和修复过程' },
+        { cat: '职业规划', q: '你想往架构师还是技术管理方向发展？' },
+        { cat: '压力应对', q: '系统突然流量翻倍，你会如何应急？' },
+        { cat: '反问环节', q: '团队的技术架构和业务规模？' }
+      ]
+    },
+    algorithm: {
+      label: '算法工程师',
+      icon: '🧠',
+      desc: '机器学习、深度学习、大模型',
+      quickQuestions: ['自我介绍', '介绍一个算法项目', '过拟合怎么解决', '大模型微调方法', '你的职业规划'],
+      questions: [
+        { cat: '自我介绍', q: '请做一个 1-2 分钟的自我介绍' },
+        { cat: '自我介绍', q: '你的研究方向和擅长的算法领域是什么？' },
+        { cat: '项目经历', q: '介绍一个你负责的算法项目，解决了什么业务问题？' },
+        { cat: '项目经历', q: '模型上线后效果如何？线上线下指标差异怎么处理？' },
+        { cat: '项目经历', q: '你做过的模型最大的提升是多少？怎么做到的？' },
+        { cat: '技术基础', q: '过拟合和欠拟合分别怎么解决？' },
+        { cat: '技术基础', q: '梯度消失和梯度爆炸的原因及解决方法？' },
+        { cat: '技术基础', q: 'Transformer 的核心原理是什么？Self-Attention 怎么工作？' },
+        { cat: '技术基础', q: 'BERT 和 GPT 的区别？各自适合什么任务？' },
+        { cat: '技术基础', q: '大模型微调有哪些方法？LoRA 的原理是什么？' },
+        { cat: '技术基础', q: 'RAG 的完整流程？如何提升 RAG 系统的效果？' },
+        { cat: '技术基础', q: 'A/B 测试如何设计？样本量怎么计算？' },
+        { cat: '产品思维', q: '算法效果和业务指标不一致时怎么权衡？' },
+        { cat: '行为面试', q: '和产品对模型效果预期不一致时怎么沟通？' },
+        { cat: '职业规划', q: '你更偏向算法研究还是工程落地？' },
+        { cat: '压力应对', q: '模型效果突然下降，你会怎么排查？' },
+        { cat: '反问环节', q: '团队的算力资源和数据规模？' }
+      ]
+    },
+    data: {
+      label: '数据分析',
+      icon: '📊',
+      desc: 'SQL、指标体系、业务洞察',
+      quickQuestions: ['自我介绍', '介绍一个数据分析项目', '指标体系怎么搭建', 'SQL 窗口函数', '你的职业规划'],
+      questions: [
+        { cat: '自我介绍', q: '请做一个 1-2 分钟的自我介绍' },
+        { cat: '自我介绍', q: '你为什么适合数据分析岗位？' },
+        { cat: '项目经历', q: '介绍一个你做的数据分析项目，带来了什么业务价值？' },
+        { cat: '项目经历', q: '如何通过数据发现一个业务问题的？最后怎么落地？' },
+        { cat: '项目经历', q: '你搭建过什么样的指标体系？' },
+        { cat: '技术基础', q: 'SQL 窗口函数有哪些？row_number/rank/dense_rank 区别？' },
+        { cat: '技术基础', q: 'LEFT JOIN、INNER JOIN、RIGHT JOIN 区别？' },
+        { cat: '技术基础', q: '如何写 SQL 找出连续登录 7 天的用户？' },
+        { cat: '技术基础', q: '常见的数据分析方法和模型有哪些？（漏斗、留存、RFM、AARRR）' },
+        { cat: '技术基础', q: '假设检验是什么？p 值怎么理解？' },
+        { cat: '产品思维', q: 'GMV 下降了 20%，你会怎么分析？' },
+        { cat: '产品思维', q: '如何评估一个新功能上线后的效果？' },
+        { cat: '产品思维', q: '留存率怎么定义？如何提升留存？' },
+        { cat: '行为面试', q: '数据结论和业务方直觉冲突时怎么处理？' },
+        { cat: '职业规划', q: '你想往业务分析还是数据科学方向发展？' },
+        { cat: '压力应对', q: '业务方要的数据很急，但数据质量有问题，你怎么办？' },
+        { cat: '反问环节', q: '团队的数据栈和数据团队规模？' }
+      ]
+    },
+    design: {
+      label: 'UI/UX 设计',
+      icon: '🎨',
+      desc: '视觉设计、交互设计、用户体验',
+      quickQuestions: ['自我介绍', '介绍一个设计项目', '设计流程是怎样的', '如何做用户调研', '你的职业规划'],
+      questions: [
+        { cat: '自我介绍', q: '请做一个 1-2 分钟的自我介绍' },
+        { cat: '自我介绍', q: '你的设计风格和核心竞争力是什么？' },
+        { cat: '项目经历', q: '介绍一个你最满意的设计项目，设计思路是怎样的？' },
+        { cat: '项目经历', q: '如何平衡设计美感和业务目标？举个例子' },
+        { cat: '项目经历', q: '你做过用户调研吗？方法和结论是什么？' },
+        { cat: '技术基础', q: '你的设计流程是怎样的？从需求到交付' },
+        { cat: '技术基础', q: '信息架构和交互设计的关系？' },
+        { cat: '技术基础', q: '设计系统（Design System）是什么？怎么搭建？' },
+        { cat: '技术基础', q: '移动端和 Web 端设计有哪些差异？' },
+        { cat: '技术基础', q: '常用的设计工具有哪些？Figma 的协作优势？' },
+        { cat: '产品思维', q: '如何通过设计提升转化率？' },
+        { cat: '产品思维', q: '如何衡量设计的成功？看哪些指标？' },
+        { cat: '行为面试', q: '设计稿被产品/研发反复否定时怎么处理？' },
+        { cat: '行为面试', q: '描述一次你和产品在体验上的分歧及解决过程' },
+        { cat: '职业规划', q: '你想往视觉还是交互/体验方向发展？' },
+        { cat: '压力应对', q: '需求方给的方向很模糊，你如何推进？' },
+        { cat: '反问环节', q: '团队的设计规范和设计/研发协作流程？' }
+      ]
+    },
+    operation: {
+      label: '运营',
+      icon: '📈',
+      desc: '用户运营、内容运营、活动运营',
+      quickQuestions: ['自我介绍', '介绍一个运营活动', '如何做用户分层', '拉新和留存哪个更重要', '你的职业规划'],
+      questions: [
+        { cat: '自我介绍', q: '请做一个 1-2 分钟的自我介绍' },
+        { cat: '自我介绍', q: '你为什么适合运营岗位？' },
+        { cat: '项目经历', q: '介绍一个你主导的运营活动，目标和结果如何？' },
+        { cat: '项目经历', q: '你做过最成功的一次用户增长，怎么做的？' },
+        { cat: '项目经历', q: '介绍一个失败的活动，复盘学到了什么？' },
+        { cat: '业务理解', q: '用户运营、内容运营、活动运营的区别？' },
+        { cat: '业务理解', q: '如何做用户分层？RFM 模型怎么用？' },
+        { cat: '业务理解', q: '拉新、促活、留存、转化哪个最重要？为什么？' },
+        { cat: '业务理解', q: 'AARRR 模型是什么？每个环节的核心指标？' },
+        { cat: '技术基础', q: '你常用哪些数据分析工具？怎么用数据指导运营？' },
+        { cat: '产品思维', q: '如何策划一场裂变活动？关键点是什么？' },
+        { cat: '产品思维', q: '社群活跃度下降，你会怎么做？' },
+        { cat: '行为面试', q: '和产品/设计在活动方案上有分歧怎么处理？' },
+        { cat: '职业规划', q: '你想往哪个运营细分方向发展？' },
+        { cat: '压力应对', q: '活动上线后效果远低于预期，你怎么办？' },
+        { cat: '反问环节', q: '团队的运营目标和 KPI 是什么？' }
+      ]
+    },
+    marketing: {
+      label: '市场营销',
+      icon: '📣',
+      desc: '品牌、投放、增长',
+      quickQuestions: ['自我介绍', '介绍一个营销 campaign', '如何做品牌定位', '投放 ROI 怎么优化', '你的职业规划'],
+      questions: [
+        { cat: '自我介绍', q: '请做一个 1-2 分钟的自我介绍' },
+        { cat: '自我介绍', q: '你为什么适合市场营销岗位？' },
+        { cat: '项目经历', q: '介绍一个你主导的营销 campaign，目标和结果如何？' },
+        { cat: '项目经历', q: '你做过的 ROI 最高的投放是怎样的？' },
+        { cat: '项目经历', q: '一次失败的营销案例及复盘' },
+        { cat: '业务理解', q: '品牌营销和效果营销的区别？' },
+        { cat: '业务理解', q: '如何做品牌定位？有哪些方法论？' },
+        { cat: '业务理解', q: '4P、4C、STP 是什么？怎么应用？' },
+        { cat: '业务理解', q: '信息流广告和搜索广告的区别？各自适合什么目标？' },
+        { cat: '技术基础', q: '你常用哪些营销数据指标？CPA/CPS/ROI 怎么算？' },
+        { cat: '产品思维', q: '预算有限，你怎么分配渠道？' },
+        { cat: '产品思维', q: '如何评估一次品牌活动的效果？' },
+        { cat: '行为面试', q: '和销售在目标上有分歧怎么处理？' },
+        { cat: '职业规划', q: '你想往品牌还是效果方向发展？' },
+        { cat: '压力应对', q: 'campaign 上线后效果不达预期，你怎么应急？' },
+        { cat: '反问环节', q: '团队的市场目标和预算规模？' }
+      ]
+    },
+    hr: {
+      label: '人力资源',
+      icon: '👥',
+      desc: '招聘、培训、绩效、员工关系',
+      quickQuestions: ['自我介绍', '如何做人才画像', '面试官如何评估候选人', '员工流失怎么分析', '你的职业规划'],
+      questions: [
+        { cat: '自我介绍', q: '请做一个 1-2 分钟的自我介绍' },
+        { cat: '自我介绍', q: '你为什么适合人力资源岗位？' },
+        { cat: '项目经历', q: '介绍一个你主导的招聘项目，结果如何？' },
+        { cat: '项目经历', q: '你处理过最复杂的员工关系案例是什么？' },
+        { cat: '项目经历', q: '你做过的培训项目效果如何评估？' },
+        { cat: '业务理解', q: 'HR 三支柱模型是什么？COE/HRBP/SSC 各自职责？' },
+        { cat: '业务理解', q: '如何做人才画像？JD 怎么写更吸引人？' },
+        { cat: '业务理解', q: '面试评估有哪些方法？STAR 面试法怎么用？' },
+        { cat: '业务理解', q: '绩效考核有哪些方法？OKR 和 KPI 的区别？' },
+        { cat: '技术基础', q: '你常用哪些招聘渠道？各自效果如何？' },
+        { cat: '产品思维', q: '关键岗位招了 3 个月没招到，你会怎么做？' },
+        { cat: '产品思维', q: '核心员工提出离职，你怎么挽留？' },
+        { cat: '行为面试', q: '和业务部门在用人标准上有分歧怎么处理？' },
+        { cat: '职业规划', q: '你想往 HRBP 还是 COE 方向发展？' },
+        { cat: '压力应对', q: '公司突然裁员，你要负责沟通，怎么处理？' },
+        { cat: '反问环节', q: '团队的组织架构和 HR 团队规模？' }
+      ]
+    },
+    qa: {
+      label: '测试工程师',
+      icon: '🐞',
+      desc: '功能测试、自动化、质量保障',
+      quickQuestions: ['自我介绍', '介绍一个测试项目', '如何设计测试用例', '自动化测试框架', '你的职业规划'],
+      questions: [
+        { cat: '自我介绍', q: '请做一个 1-2 分钟的自我介绍' },
+        { cat: '自我介绍', q: '你为什么适合测试岗位？' },
+        { cat: '项目经历', q: '介绍一个你负责的测试项目，测试策略是怎样的？' },
+        { cat: '项目经历', q: '你发现过的最严重的 bug 是什么？怎么定位的？' },
+        { cat: '项目经历', q: '你搭建过的自动化测试框架是怎样的？' },
+        { cat: '技术基础', q: '如何设计测试用例？等价类、边界值、场景法？' },
+        { cat: '技术基础', q: '黑盒测试和白盒测试的区别？' },
+        { cat: '技术基础', q: '接口测试怎么做？常用工具？' },
+        { cat: '技术基础', q: 'UI 自动化和接口自动化各自适合什么场景？' },
+        { cat: '技术基础', q: '性能测试的核心指标有哪些？TPS/QPS/响应时间？' },
+        { cat: '产品思维', q: '上线时间紧，测试覆盖不全，你怎么权衡？' },
+        { cat: '产品思维', q: '如何推动研发提升代码质量？' },
+        { cat: '行为面试', q: '研发认为不是 bug，你怎么办？' },
+        { cat: '行为面试', q: '描述一次线上漏测事故的复盘' },
+        { cat: '职业规划', q: '你想往测试开发还是质量保证方向发展？' },
+        { cat: '压力应对', q: '发版前发现严重 bug，但产品要强推上线，你怎么办？' },
+        { cat: '反问环节', q: '团队的测试流程和自动化覆盖率？' }
+      ]
+    },
+    finance: {
+      label: '财务',
+      icon: '💰',
+      desc: '财务分析、预算、风控',
+      quickQuestions: ['自我介绍', '介绍一个财务分析项目', '三大报表的关系', '如何做财务预测', '你的职业规划'],
+      questions: [
+        { cat: '自我介绍', q: '请做一个 1-2 分钟的自我介绍' },
+        { cat: '自我介绍', q: '你为什么适合财务岗位？' },
+        { cat: '项目经历', q: '介绍一个你做的财务分析项目，带来了什么价值？' },
+        { cat: '项目经历', q: '你做过的预算编制项目是怎样的？' },
+        { cat: '项目经历', q: '一次成本优化的案例' },
+        { cat: '技术基础', q: '三大财务报表是什么？它们之间的关系？' },
+        { cat: '技术基础', q: '如何做财务预测？有哪些方法？' },
+        { cat: '技术基础', q: 'NPV、IRR 是什么？怎么用于投资决策？' },
+        { cat: '技术基础', q: '杜邦分析法是什么？怎么拆解 ROE？' },
+        { cat: '技术基础', q: '你常用哪些财务指标？怎么算？' },
+        { cat: '业务理解', q: '如何从财务数据发现经营问题？' },
+        { cat: '产品思维', q: '业务要扩张但现金流紧张，你怎么给建议？' },
+        { cat: '行为面试', q: '和业务部门在预算上有分歧怎么处理？' },
+        { cat: '职业规划', q: '你想往财务分析还是 FP&A 方向发展？' },
+        { cat: '压力应对', q: '月底结账发现数据异常，时间紧，你怎么办？' },
+        { cat: '反问环节', q: '团队的财务架构和汇报关系？' }
+      ]
+    }
+  };
 
-  const QUICK_QUESTIONS = [
-    '请做一个自我介绍',
-    '介绍一个产品项目',
-    '与研发分歧怎么处理',
-    '你的职业规划',
-    'AI 产品理解'
-  ];
+  // 当前选中职位（默认产品经理）
+  let currentPosition = localStorage.getItem('interview_position_v1') || 'pm';
+
+  // 兼容：旧代码引用 QUESTION_BANK 的地方，返回当前职位的题目
+  let QUESTION_BANK = (POSITION_BANK[currentPosition]
+    ? POSITION_BANK[currentPosition].questions
+    : POSITION_BANK.pm.questions);
+
+  let QUICK_QUESTIONS = (POSITION_BANK[currentPosition]
+    ? POSITION_BANK[currentPosition].quickQuestions
+    : POSITION_BANK.pm.quickQuestions);
+
+  // 切换职位：更新题库和快速选题，并持久化
+  function switchPosition(posId) {
+    if (!POSITION_BANK[posId]) return;
+    currentPosition = posId;
+    localStorage.setItem('interview_position_v1', posId);
+    QUESTION_BANK = POSITION_BANK[posId].questions;
+    QUICK_QUESTIONS = POSITION_BANK[posId].quickQuestions;
+    activeCategory = '全部';
+    renderPositionSelector();
+    renderQuickChips();
+    renderCategoryFilters();
+    renderQuestionList();
+    // 同步更新题库面板标题
+    const pos = POSITION_BANK[posId];
+    const head = document.querySelector('#panel-bank .page-head p');
+    if (head) head.textContent = `${pos.icon} ${pos.label} · ${pos.desc}，点击即可练习`;
+    // 同步更新面试信息栏
+    if (typeof updateResumeStatus === 'function') updateResumeStatus();
+  }
 
   const DEFAULT_PROFILE = {
     name: '',
@@ -1720,7 +2164,17 @@ textarea { resize: vertical; min-height: 88px; }
     projects: '',
     resumeRaw: '',
     jobCompany: '',
-    jobRequirements: ''
+    jobRequirements: '',
+    // 学生基本信息（校企班学生）
+    school: '',          // 学校
+    major: '',           // 专业
+    grade: '',           // 年级
+    gpa: '',             // 绩点
+    rank: '',            // 综合排名
+    courses: '',         // 主修课程及成绩
+    clubs: '',           // 社团经历
+    competitions: '',    // 在校竞赛经历
+    internships: ''      // 企业实践经历
   };
 
   let currentAnswer = '';
@@ -1776,11 +2230,19 @@ textarea { resize: vertical; min-height: 88px; }
   }
 
   function getApiConfig() {
-    return loadJSON(STORAGE.api, {
+    const cfg = loadJSON(STORAGE.api, {
       key: '',
       model: 'gpt-4o-mini',
       base: 'https://api.openai.com/v1'
     });
+    // 读取时也校验并修正，避免旧的错误配置一直被使用
+    if (cfg.base) {
+      const { corrected } = validateAndFixApiBase(cfg.base, cfg.model);
+      if (corrected && corrected.replace(/\/+$/, '') !== cfg.base.replace(/\/+$/, '')) {
+        cfg.base = corrected;
+      }
+    }
+    return cfg;
   }
 
   function getServerUrl() {
@@ -1827,7 +2289,8 @@ textarea { resize: vertical; min-height: 88px; }
     localStorage.setItem(STORAGE.mode, mode);
     $$('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
     $('#agentSteps').classList.toggle('visible', mode === 'agent');
-    if (mode === 'agent') checkServerHealth();
+    // 注意：不在 setMode 内部自动调用 checkServerHealth，由调用方决定是否检查
+    // 避免 agent 模式下 Agent 服务未启动时产生 ERR_CONNECTION_REFUSED 噪音
   }
 
   function appendAgentStep(ev) {
@@ -1982,10 +2445,119 @@ textarea { resize: vertical; min-height: 88px; }
     return lines[Math.floor(Math.random() * lines.length)] || '具备产品规划与跨团队协作能力';
   }
 
+  // 职位特定的开场论据（用于 intro 模板适配多职位）
+  const POSITION_INTRO_POINTS = {
+    pm: {
+      tagline: '我具备「产品方法论 × AI 技术认知」的双重优势，能快速在业务中落地产品价值。',
+      points: [
+        '熟悉 需求分析 → PRD → 原型设计 → 迭代闭环 全流程，能独立推动产品落地',
+        '习惯用 AI 工具辅助工作流，提升调研与决策效率'
+      ],
+      strengths: '产品全链路能力 + AI 产品认知 + 较强的学习能力',
+      match: '既懂产品方法论，又理解 AI 技术边界，能在「用户价值」与「技术可行性」之间找到平衡'
+    },
+    frontend: {
+      tagline: '我具备「扎实前端基础 × 工程化思维」的双重优势，能高效交付高质量界面。',
+      points: [
+        '熟悉 HTML/CSS/JS → Vue/React → 工程化构建 全链路，能独立承担复杂前端开发',
+        '关注性能优化与用户体验，习惯用数据驱动前端优化决策'
+      ],
+      strengths: '前端全栈能力 + 性能优化经验 + 良好的产品协作意识',
+      match: '既懂前端工程化，又理解用户体验诉求，能在「交付效率」与「代码质量」之间找到平衡'
+    },
+    backend: {
+      tagline: '我具备「系统设计 × 高并发实战」的双重优势，能构建稳定可扩展的后端服务。',
+      points: [
+        '熟悉 服务架构 → 数据库设计 → 分布式中间件 全链路，能独立设计高可用系统',
+        '关注性能与稳定性，习惯用压测和监控驱动系统优化'
+      ],
+      strengths: '后端系统设计 + 高并发处理经验 + 强故障排查能力',
+      match: '既懂系统架构，又理解业务诉求，能在「技术先进性」与「系统稳定性」之间找到平衡'
+    },
+    algorithm: {
+      tagline: '我具备「算法功底 × 工程落地」的双重优势，能把模型能力转化为业务价值。',
+      points: [
+        '熟悉 传统ML → 深度学习 → 大模型应用 全链路，能独立完成建模与上线',
+        '关注模型效果与业务指标的闭环，习惯用 A/B 测试验证价值'
+      ],
+      strengths: '算法建模能力 + 大模型应用经验 + 业务理解力',
+      match: '既懂算法原理，又理解业务场景，能在「模型效果」与「工程成本」之间找到平衡'
+    },
+    data: {
+      tagline: '我具备「数据思维 × 业务洞察」的双重优势，能用数据驱动决策。',
+      points: [
+        '熟悉 SQL → 数据分析 → 指标体系搭建 全链路，能独立完成取数到洞察',
+        '关注数据质量与业务落地，习惯用分析框架拆解复杂问题'
+      ],
+      strengths: '数据分析能力 + 业务洞察力 + 跨部门沟通能力',
+      match: '既懂数据分析，又理解业务逻辑，能在「数据结论」与「业务直觉」之间找到桥梁'
+    },
+    design: {
+      tagline: '我具备「视觉表达 × 体验思维」的双重优势，能打造兼具美感与实用的产品界面。',
+      points: [
+        '熟悉 用户调研 → 交互设计 → 视觉表达 全链路，能独立完成端到端设计',
+        '关注设计系统与协作效率，习惯用设计规范保证一致性'
+      ],
+      strengths: '全链路设计能力 + 用户同理心 + 良好的研发协作意识',
+      match: '既懂视觉设计，又理解交互逻辑，能在「设计美感」与「业务目标」之间找到平衡'
+    },
+    operation: {
+      tagline: '我具备「用户思维 × 数据驱动」的双重优势，能推动用户增长与活跃。',
+      points: [
+        '熟悉 用户运营 → 活动策划 → 内容运营 全链路，能独立主导运营项目',
+        '关注数据指标与复盘，习惯用 AARRR 框架指导运营动作'
+      ],
+      strengths: '运营全链路能力 + 活动策划经验 + 数据分析意识',
+      match: '既懂用户心理，又理解数据增长，能在「创意策划」与「效果转化」之间找到平衡'
+    },
+    marketing: {
+      tagline: '我具备「品牌思维 × 效果投放」的双重优势，能驱动品效协同增长。',
+      points: [
+        '熟悉 品牌策划 → 渠道投放 → 增长闭环 全链路，能独立主导营销 campaign',
+        '关注 ROI 与数据复盘，习惯用数据指导预算分配'
+      ],
+      strengths: '营销全链路能力 + 投放优化经验 + 跨部门协作能力',
+      match: '既懂品牌建设，又理解效果转化，能在「长期品牌」与「短期效果」之间找到平衡'
+    },
+    hr: {
+      tagline: '我具备「人才洞察 × 组织理解」的双重优势，能支撑业务的人才与组织发展。',
+      points: [
+        '熟悉 招聘 → 培训 → 绩效 → 员工关系 全链路，能独立主导 HR 项目',
+        '关注人才质量与组织氛围，习惯用数据驱动 HR 决策'
+      ],
+      strengths: 'HR 全模块能力 + 业务理解力 + 沟通协调能力',
+      match: '既懂人力资源专业，又理解业务诉求，能在「人才发展」与「业务目标」之间找到平衡'
+    },
+    qa: {
+      tagline: '我具备「质量意识 × 自动化思维」的双重优势，能全方位保障产品质量。',
+      points: [
+        '熟悉 功能测试 → 接口测试 → 自动化 → 性能 全链路，能独立搭建测试体系',
+        '关注研发效能与质量度量，习惯用自动化提升测试效率'
+      ],
+      strengths: '测试全链路能力 + 自动化框架经验 + 缺陷定位能力',
+      match: '既懂测试方法，又理解研发流程，能在「质量保障」与「交付效率」之间找到平衡'
+    },
+    finance: {
+      tagline: '我具备「财务专业 × 业务理解」的双重优势，能用财务视角支撑经营决策。',
+      points: [
+        '熟悉 财务报表 → 预算管理 → 财务分析 全链路，能独立完成财务建模',
+        '关注经营质量与风险控制，习惯用数据驱动财务建议'
+      ],
+      strengths: '财务分析能力 + 业务洞察力 + 风险意识',
+      match: '既懂财务专业，又理解业务逻辑，能在「合规稳健」与「业务发展」之间找到平衡'
+    }
+  };
+
+  function getPositionIntro(posId) {
+    return POSITION_INTRO_POINTS[posId] || POSITION_INTRO_POINTS.pm;
+  }
+
   function buildLocalAnswer(question, profile) {
     const type = classifyQuestion(question);
     const name = profile.name || '我';
-    const target = profile.target || '产品经理';
+    // 默认 target 取当前选中职位（多职位题库支持）
+    const posInfo = POSITION_BANK[currentPosition] || POSITION_BANK.pm;
+    const target = profile.target || posInfo.label;
     const highlight = pickHighlight(profile);
     // 从简历原文提取项目信息用于模板
     const resumeText = profile.resumeRaw || '';
@@ -2002,21 +2574,21 @@ textarea { resize: vertical; min-height: 88px; }
       intro: `【1-3-1 结构 + SWOT 自我剖析】
 
 🔺 结论先行
-您好，我是${name}，目标岗位是${target}。我具备「产品方法论 × AI 技术认知」的双重优势，能快速在业务中落地产品价值。
+您好，我是${name}，目标岗位是${target}。${getPositionIntro(currentPosition).tagline}
 
 📊 三个论据
 1. ${highlight}
-2. 熟悉 需求分析 → PRD → 原型设计 → 迭代闭环 全流程，能独立推动产品落地
-3. 习惯用 AI 工具辅助工作流，提升调研与决策效率
+2. ${getPositionIntro(currentPosition).points[0]}
+3. ${getPositionIntro(currentPosition).points[1]}
 
 🧭 SWOT 自我定位
-• S（优势）：产品全链路能力 + AI 产品认知 + 较强的学习能力
+• S（优势）：${getPositionIntro(currentPosition).strengths}
 • W（劣势）：${target}细分领域经验可进一步积累
-• O（机会）：AI 浪潮带来巨大产品创新窗口
+• O（机会）：行业变化带来新的成长窗口
 • T（威胁）：行业变化快，需要持续学习保持竞争力
 
 🎯 岗位匹配
-我的优势在于：既懂产品方法论，又理解 AI 技术边界，能在「用户价值」与「技术可行性」之间找到平衡。非常期待加入贵司，在${target}方向贡献价值。`,
+我的优势在于：${getPositionIntro(currentPosition).match}。非常期待加入贵司，在${target}方向贡献价值。`,
 
       project: `【STAR 框架 + AARRR 增长度量】
 
@@ -2371,8 +2943,7 @@ ${frameworks.includes('5W1H') ? `❓ 5W1H 问题定义
         temperature: 0.8
       })
     });
-    if (!res.ok) throw new Error('API ' + res.status);
-    const data = await res.json();
+    const data = await safeReadJSON(res);
     const content = data.choices?.[0]?.message?.content || '';
     // 尝试提取 JSON
     const jsonMatch = content.match(/\[[\s\S]*\]/);
@@ -2548,15 +3119,25 @@ ${frameworks.includes('5W1H') ? `❓ 5W1H 问题定义
     const p = getProfile();
     const el = document.getElementById('interviewResumeStatus');
     const label = document.getElementById('interviewResumeLabel');
+    // 当前职位
+    const posInfo = POSITION_BANK[currentPosition] || POSITION_BANK.pm;
     if (p.resumeRaw) {
       let status = '✅ 已上传简历 · ' + (p.name || '未命名') + ' · ' + p.resumeRaw.length + '字';
-      if (p.jobCompany) status += ' · 🎯' + p.jobCompany;
+      status += ' · 🎯面试岗位：' + posInfo.label;
+      if (p.jobCompany) status += ' · 🏢' + p.jobCompany;
       if (p.jobRequirements) status += ' · 📋JD ' + p.jobRequirements.length + '字';
+      // 学生信息标记
+      const studentBits = [];
+      if (p.school) studentBits.push(p.school);
+      if (p.major) studentBits.push(p.major);
+      if (p.gpa) studentBits.push('GPA ' + p.gpa);
+      if (p.clubs || p.competitions || p.internships) studentBits.push('经历已填');
+      if (studentBits.length) status += ' · 🎓' + studentBits.join('/');
       el.className = 'interview-resume-status ready';
       label.textContent = status;
     } else {
       el.className = 'interview-resume-status empty';
-      label.textContent = '请先在「设置」中上传简历';
+      label.textContent = '请先在「设置」中上传简历（当前面试岗位：' + posInfo.label + '）';
       const badge = document.getElementById('interviewModeBadge');
       if (badge) badge.textContent = '';
     }
@@ -2572,7 +3153,9 @@ ${frameworks.includes('5W1H') ? `❓ 5W1H 问题定义
   // 本地题库：从简历文本提取信息定制问题（AI 不可用时的降级方案）
   function buildLocalQuestions(profile, count) {
     const name = profile.name || '候选人';
-    const target = profile.target || '产品经理';
+    // 默认 target 取当前选中职位（多职位题库支持）
+    const posInfo = POSITION_BANK[currentPosition] || POSITION_BANK.pm;
+    const target = profile.target || posInfo.label;
     const resumeText = profile.resumeRaw || profile.summary || '';
     const hasResume = resumeText.length > 20;
     const company = profile.jobCompany || '';
@@ -2673,17 +3256,38 @@ ${frameworks.includes('5W1H') ? `❓ 5W1H 问题定义
     return followUps[Math.floor(Math.random() * followUps.length)];
   }
 
+  // 构建学生基本信息摘要（用于 AI prompt 融入）
+  function buildStudentBrief(profile) {
+    const parts = [];
+    if (profile.school) parts.push('学校：' + profile.school);
+    if (profile.major) parts.push('专业：' + profile.major);
+    if (profile.grade) parts.push('年级：' + profile.grade);
+    if (profile.gpa) parts.push('绩点：' + profile.gpa);
+    if (profile.rank) parts.push('综合排名：' + profile.rank);
+    if (profile.courses) parts.push('主修课程及成绩：\n' + profile.courses);
+    if (profile.clubs) parts.push('社团经历：\n' + profile.clubs);
+    if (profile.competitions) parts.push('竞赛经历：\n' + profile.competitions);
+    if (profile.internships) parts.push('企业实践经历：\n' + profile.internships);
+    return parts.join('\n');
+  }
+
   async function generateQuestionsWithAI(profile) {
     const api = getApiConfig();
     if (!api.key) return null;
 
     const hasCompany = !!(profile.jobCompany || '').trim();
     const hasJD = !!(profile.jobRequirements || '').trim();
+    const studentBrief = buildStudentBrief(profile);
+    const hasStudentInfo = studentBrief.length > 0;
+    // 当前选中职位
+    const posInfo = POSITION_BANK[currentPosition] || POSITION_BANK.pm;
+    const posLabel = posInfo.label;
+    const posDesc = posInfo.desc;
 
-    const systemPrompt = `你是一位资深面试官。请仔细阅读候选人以下完整简历${hasCompany ? '和求职目标公司' : ''}${hasJD ? '、岗位要求' : ''}，基于简历中的具体项目经历、技能、工作内容，生成 8 道有深度的面试问题，覆盖以下维度：
+    const systemPrompt = `你是一位资深面试官。本次面试的目标岗位是「${posLabel}」（${posDesc}）。请仔细阅读候选人以下完整简历${hasCompany ? '和求职目标公司' : ''}${hasJD ? '、岗位要求' : ''}${hasStudentInfo ? '、学生基本信息' : ''}，基于简历中的具体项目经历、技能、工作内容${hasStudentInfo ? '以及学业、社团、竞赛、实践经历' : ''}，生成 8 道针对「${posLabel}」岗位的有深度的面试问题，覆盖以下维度：
 1. 自我介绍/表达能力（1题）
-2. 专业能力/项目深挖（2题） — 必须从简历中的真实项目出题，深挖细节
-3. 逻辑能力/产品思维（2题）
+2. 专业能力/项目深挖（2题） — 必须从简历中的真实项目出题，深挖细节，且与「${posLabel}」岗位强相关
+3. 逻辑能力/${posLabel === '产品经理' ? '产品思维' : '专业思维'}（2题）
 4. 情绪控制/冲突处理（1题）
 5. 自信程度/压力应对（1题）
 6. 行业视野/数据驱动（1题）
@@ -2695,9 +3299,11 @@ dim 取值为：professional, expression, logic, emotion, confidence
 要求：
 - 问题必须结合候选人简历中的具体经历和数据，不要泛泛而谈
 - 每道题要有深度，能考察真实能力（如追问项目细节、决策过程、数据指标）
+- 问题必须贴合「${posLabel}」岗位的实际工作场景和能力要求
 - 题目覆盖不同场景，不要集中在同一个话题上
 ${hasCompany ? `- 问题要围绕 ${profile.jobCompany} 的实际情况和业务场景展开` : ''}
 ${hasJD ? `- 问题要针对以下岗位要求出题：${profile.jobRequirements}` : ''}
+${hasStudentInfo ? `- 候选人是校企班在校/应届学生，可以考察其专业基础、课程所学、社团组织能力、竞赛项目、企业实践等学生视角的内容` : ''}
 - 如果简历中包含多个项目，请针对不同项目出题，考察全面性`;
 
     const url = api.base.replace(/\/$/, '') + '/chat/completions';
@@ -2708,13 +3314,12 @@ ${hasJD ? `- 问题要针对以下岗位要求出题：${profile.jobRequirements
         model: api.model || 'gpt-4o-mini',
         messages: [
           { role: 'system', content: systemPrompt },
-          { role: 'user', content: `以下是候选人的完整简历，请基于此出题：\n\n${profile.resumeRaw}\n\n${profile.jobCompany ? '目标公司：' + profile.jobCompany + '\n' : ''}${profile.jobRequirements ? '岗位要求：\n' + profile.jobRequirements : ''}` }
+          { role: 'user', content: `目标岗位：${posLabel}（${posDesc}）\n\n以下是候选人的完整简历，请基于此出题：\n\n${profile.resumeRaw}\n\n${profile.jobCompany ? '目标公司：' + profile.jobCompany + '\n' : ''}${profile.jobRequirements ? '岗位要求：\n' + profile.jobRequirements + '\n' : ''}${hasStudentInfo ? '学生基本信息：\n' + studentBrief : ''}` }
         ],
         temperature: 0.8
       })
     });
-    if (!res.ok) throw new Error('API ' + res.status);
-    const data = await res.json();
+    const data = await safeReadJSON(res);
     const content = data.choices?.[0]?.message?.content || '';
     const jsonMatch = content.match(/\[[\s\S]*\]/);
     if (!jsonMatch) return null;
@@ -2728,6 +3333,7 @@ ${hasJD ? `- 问题要针对以下岗位要求出题：${profile.jobRequirements
     const api = getApiConfig();
     if (!api.key) return null;
 
+    const studentBrief = buildStudentBrief(profile);
     const systemPrompt = `你是面试官，根据候选人刚刚的回答，追问一个更深层次的问题。
 
 要求：
@@ -2745,14 +3351,15 @@ ${hasJD ? `- 问题要针对以下岗位要求出题：${profile.jobRequirements
           model: api.model || 'gpt-4o-mini',
           messages: [
             { role: 'system', content: systemPrompt },
-            { role: 'user', content: `上一题：${prevQA.q}\n候选人回答：${prevQA.a}\n\n候选人背景：${profile.name} · ${profile.target}\n${profile.resumeRaw ? '简历摘要（前200字）：' + profile.resumeRaw.slice(0, 200) + '\n' : ''}${profile.jobCompany ? '目标公司：' + profile.jobCompany + '\n' : ''}${profile.jobRequirements ? '岗位要求：\n' + profile.jobRequirements : ''}` }
+            { role: 'user', content: `上一题：${prevQA.q}\n候选人回答：${prevQA.a}\n\n候选人背景：${profile.name} · ${profile.target}\n${profile.resumeRaw ? '简历摘要（前200字）：' + profile.resumeRaw.slice(0, 200) + '\n' : ''}${profile.jobCompany ? '目标公司：' + profile.jobCompany + '\n' : ''}${profile.jobRequirements ? '岗位要求：\n' + profile.jobRequirements + '\n' : ''}${studentBrief ? '学生信息：\n' + studentBrief : ''}` }
           ],
           temperature: 0.7,
           max_tokens: 200
         })
       });
       if (!res.ok) return null;
-      const data = await res.json();
+      let data;
+      try { data = await safeReadJSON(res); } catch { return null; }
       const text = data.choices?.[0]?.message?.content || '';
       const q = text.replace(/^["'"]|["'"]$/g, '').trim();
       if (!q || q.length < 5) return null;
@@ -2795,8 +3402,7 @@ ${hasJD ? `- 问题要针对以下岗位要求出题：${profile.jobRequirements
         temperature: 0.5
       })
     });
-    if (!res.ok) throw new Error('API ' + res.status);
-    const data = await res.json();
+    const data = await safeReadJSON(res);
     const content = data.choices?.[0]?.message?.content || '';
     const jsonMatch = content.match(/\{[\s\S]*\}/);
     if (!jsonMatch) return null;
@@ -2866,8 +3472,7 @@ ${hasJD ? `- 问题要针对以下岗位要求出题：${profile.jobRequirements
         temperature: 0.5
       })
     });
-    if (!res.ok) throw new Error('API ' + res.status);
-    const data = await res.json();
+    const data = await safeReadJSON(res);
     const content = data.choices?.[0]?.message?.content || '';
     const jsonMatch = content.match(/\{[\s\S]*\}/);
     if (!jsonMatch) return null;
@@ -4048,8 +4653,16 @@ ${hasJD ? `- 问题要针对以下岗位要求出题：${profile.jobRequirements
     // 生成问题池（8 题用于随机抽取）
     const api = getApiConfig();
     const badge = document.getElementById('interviewModeBadge');
+    const onlineBank = getOnlineBank();
     let questions;
-    if (api.key) {
+    // 优先级：联网题库 > AI 出题 > 本地题库
+    if (onlineBank.questions && onlineBank.questions.length >= 5) {
+      questions = onlineBank.questions.slice(0, INTERVIEW_POOL_SIZE).map((q, i) => ({
+        id: i + 1, q: q.q, dim: q.dim || 'professional', source: q.source
+      }));
+      badge.textContent = `🌐 联网题库模式：${onlineBank.company || ''} ${onlineBank.position || ''} · ${questions.length} 道面经题`;
+      badge.style.color = 'var(--accent)';
+    } else if (api.key) {
       try {
         questions = await generateQuestionsWithAI(profile);
         if (questions && questions.length) {
@@ -4066,7 +4679,7 @@ ${hasJD ? `- 问题要针对以下岗位要求出题：${profile.jobRequirements
         questions = buildLocalQuestions(profile, INTERVIEW_POOL_SIZE);
       }
     } else {
-      badge.textContent = '💡 未配置 API，使用本地题库。如需个性化问题请在设置中配置 API Key';
+      badge.textContent = '💡 未配置 API，使用本地题库。如需个性化问题请在设置中配置 API Key 或联网搜索题库';
       badge.style.color = 'var(--ink-muted)';
       questions = buildLocalQuestions(profile, INTERVIEW_POOL_SIZE);
     }
@@ -4084,23 +4697,34 @@ ${hasJD ? `- 问题要针对以下岗位要求出题：${profile.jobRequirements
     const api = getApiConfig();
     if (!api.key) throw new Error('NO_API');
 
-    const systemPrompt = `你是一位资深面试教练，帮助候选人准备面试。请根据候选人的背景，针对面试问题生成专业、自然、可直接口述的中文回答。
+    // 当前选中职位
+    const posInfo = POSITION_BANK[currentPosition] || POSITION_BANK.pm;
+    const posLabel = posInfo.label;
+    // 联网题库（如果当前问题来自联网题库，AI 应知道公司上下文）
+    const bank = getOnlineBank();
+    const bankContext = (bank.questions && bank.questions.length)
+      ? `\n\n【面试背景】候选人正在准备「${bank.company || ''}」的「${bank.position || posLabel}」岗位面试，以下问题可能来源于网络公开面经（${bank.company || '该公司'} 真实面试题）。请在回答中适当体现对该公司业务的理解。`
+      : '';
+
+    const systemPrompt = `你是一位资深面试教练，帮助候选人准备面试。当前面试的目标岗位是「${posLabel}」。请根据候选人「${posLabel}」的岗位背景，针对面试问题生成专业、自然、可直接口述的中文回答。
 
 要求：
-1. 使用 PM 专属框架组织回答，根据问题类型自动选择最佳框架组合：
+1. 使用合适的回答框架组织回答，根据问题类型自动选择最佳框架组合：
    - 自我介绍/职业规划类 → 1-3-1 结构 + SWOT 自我剖析
-   - 项目经历类 → STAR 法则 + AARRR 海盗指标
+   - 项目经历类 → STAR 法则 + 量化成果
    - 行为面试/分歧冲突类 → STAR + SWOT 态势分析
    - 产品思维/优先级类 → RICE 优先级 + KANO 需求分析
-   - 数据分析/指标类 → AARRR 增长诊断 + HEART 体验度量
+   - 数据分析/指标类 → 漏斗模型 + 对比分析
+   - 技术基础类 → 概念定义 + 原理拆解 + 实际应用 + 对比延伸
    - 用户体验类 → User Journey Map + HEART 度量
    - 竞品/市场类 → 3C 分析 + SWOT + PEST
-   - AI 产品类 → 3C 定位 + MVP 验证路径
-   - 压力应对/决策类 → RICE 量化 + 1-3-1 决策框架
-2. 回答长度控制在 300-500 字，适合 1.5-2 分钟口述
-3. 语气自信但不浮夸，具体但不编造离谱数据
-4. 结构清晰，用框架术语作为小标题（如：🍚 RICE 量化评估、📐 KANO 需求分类）
-5. 结合候选人背景个性化，不要泛泛而谈
+   - 压力应对/决策类 → 量化评估 + 1-3-1 决策框架
+2. 回答必须贴合「${posLabel}」岗位的实际工作场景和专业能力要求，体现该岗位的专业性
+3. 回答长度控制在 300-500 字，适合 1.5-2 分钟口述
+4. 语气自信但不浮夸，具体但不编造离谱数据
+5. 结构清晰，用框架术语作为小标题
+6. 结合候选人背景个性化，不要泛泛而谈
+${bankContext}
 
 候选人完整简历：
 ${profile.resumeRaw}`;
@@ -4224,11 +4848,13 @@ ${profile.resumeRaw}`;
     const api = getApiConfig();
     if (!api.key) return null;
 
+    const studentBrief = buildStudentBrief(profile);
     const systemPrompt = `你是一位资深面试官。请为下面的面试问题生成一份"标准参考答案"，展示理想的回答应该包含什么内容。
 
 要求：
 - 使用 PM 专属框架（STAR、RICE、KANO、SWOT 等）组织回答
 - 结合候选人背景个性化（姓名：${profile.name}，目标：${profile.target}${profile.jobCompany ? '，求职公司：' + profile.jobCompany : ''}）
+${studentBrief ? '- 候选人是校企班学生，回答要符合学生身份，可结合其学业、社团、竞赛、实践经历' : ''}
 - 长度控制在 200-400 字
 - 语气专业、自信
 - 不要使用"你可以这样说"之类的引导语，直接给出回答正文`;
@@ -4242,14 +4868,15 @@ ${profile.resumeRaw}`;
           model: api.model || 'gpt-4o-mini',
           messages: [
             { role: 'system', content: systemPrompt },
-            { role: 'user', content: `问题：${question}\n\n候选人简历：${(profile.resumeRaw || profile.summary || '').slice(0, 1000)}${profile.jobCompany ? '\n目标公司：' + profile.jobCompany : ''}${profile.jobRequirements ? '\n岗位要求：\n' + profile.jobRequirements : ''}` }
+            { role: 'user', content: `问题：${question}\n\n候选人简历：${(profile.resumeRaw || profile.summary || '').slice(0, 1000)}${profile.jobCompany ? '\n目标公司：' + profile.jobCompany : ''}${profile.jobRequirements ? '\n岗位要求：\n' + profile.jobRequirements : ''}${studentBrief ? '\n学生基本信息：\n' + studentBrief : ''}` }
           ],
           temperature: 0.6,
           max_tokens: 800
         })
       });
       if (!res.ok) return null;
-      const data = await res.json();
+      let data;
+      try { data = await safeReadJSON(res); } catch { return null; }
       return data.choices?.[0]?.message?.content || null;
     } catch {
       return null;
@@ -4269,19 +4896,268 @@ ${profile.resumeRaw}`;
     renderHistory();
   }
 
+  // ===== 联网题库 =====
+  // 外部面试题网站快捷入口（按公司+岗位构造搜索链接）
+  const EXTERNAL_LINK_SITES = [
+    { name: '牛客网', icon: '🐮', url: (c, p) => `https://www.nowcoder.com/search?query=${encodeURIComponent((c||'') + ' ' + (p||'') + ' 面经')}` },
+    { name: '看准网', icon: '👁️', url: (c, p) => `https://www.kanzhun.com/search/?query=${encodeURIComponent((c||'') + ' ' + (p||'') + ' 面试')}` },
+    { name: '脉脉', icon: '💬', url: (c, p) => `https://maimai.cn/web/search_center?type=feed&query=${encodeURIComponent((c||'') + ' ' + (p||'') + ' 面经')}` },
+    { name: '力扣', icon: '📑', url: (c, p) => `https://leetcode.cn/search/?query=${encodeURIComponent((c||'') + ' ' + (p||''))}` },
+    { name: '小红书', icon: '📕', url: (c, p) => `https://www.xiaohongshu.com/search_result?keyword=${encodeURIComponent((c||'') + ' ' + (p||'') + ' 面试')}` },
+    { name: '知乎', icon: '💡', url: (c, p) => `https://www.zhihu.com/search?type=content&q=${encodeURIComponent((c||'') + ' ' + (p||'') + ' 面试经验')}` }
+  ];
+
+  function renderExternalLinks() {
+    const container = $('#externalLinks');
+    if (!container) return;
+    const company = ($('#searchCompany').value || '').trim();
+    const position = ($('#searchPosition').value || '').trim();
+    container.innerHTML = EXTERNAL_LINK_SITES.map(site =>
+      `<a class="external-link-chip" href="${site.url(company, position)}" target="_blank" rel="noopener" title="${site.name}搜索">
+        <span class="el-icon">${site.icon}</span>
+        <span class="el-name">${site.name}</span>
+      </a>`
+    ).join('');
+  }
+
+  // 获取联网题库
+  function getOnlineBank() {
+    return loadJSON(STORAGE.onlineBank, { company: '', position: '', questions: [], time: '' });
+  }
+
+  function saveOnlineBank(data) {
+    saveJSON(STORAGE.onlineBank, data);
+  }
+
+  // 渲染搜索结果
+  function renderOnlineResults() {
+    const bank = getOnlineBank();
+    const container = $('#onlineResults');
+    if (!bank.questions || !bank.questions.length) {
+      container.hidden = true;
+      return;
+    }
+    container.hidden = false;
+    container.innerHTML = `
+      <div class="online-results-header">
+        <span class="or-badge">📚 已缓存题库</span>
+        <span class="or-meta">${bank.company || '未知公司'} · ${bank.position || '未知岗位'} · ${bank.questions.length} 题 · ${bank.time || ''}</span>
+        <span class="or-hint">智能练习和模拟面试将优先使用这些题目</span>
+      </div>
+      <div class="online-results-list">
+        ${bank.questions.map((q, i) => `
+          <div class="online-q-item">
+            <span class="oq-num">${i + 1}</span>
+            <div class="oq-body">
+              <div class="oq-text">${escapeHtml(q.q)}</div>
+              ${q.source ? `<div class="oq-source">来源：${escapeHtml(q.source)}</div>` : ''}
+              ${q.dim ? `<span class="oq-dim">${escapeHtml(q.dim)}</span>` : ''}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  // 简易 HTML 转义
+  function escapeHtml(s) {
+    return String(s || '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+  }
+
+  // 安全读取 API 响应：先读 text 再 JSON.parse，避免 res.json() 遇到 HTML 抛 "Unexpected token '<'"
+  async function safeReadJSON(res) {
+    const text = await res.text();
+    if (!res.ok) {
+      throw new Error('API 返回错误 ' + res.status + '：' + (text.slice(0, 150) || res.statusText));
+    }
+    try {
+      return JSON.parse(text);
+    } catch (e) {
+      if (text.trim().startsWith('<') || text.includes('<!DOCTYPE')) {
+        throw new Error('API 返回了 HTML 而非 JSON，请检查 API Base URL 是否正确（DeepSeek: https://api.deepseek.com，OpenAI: https://api.openai.com/v1，千问: https://dashscope.aliyuncs.com/compatible-mode/v1）');
+      }
+      throw new Error('API 返回内容解析失败：' + text.slice(0, 150));
+    }
+  }
+
+  // API Base URL 配置表（提供商 → 正确 Base URL → 推荐模型）
+  const API_PROVIDER_PRESETS = [
+    { name: 'OpenAI',       keySub: 'sk-',     urlMatch: /openai\.com/,         correct: 'https://api.openai.com/v1',                                  models: ['gpt-4o-mini', 'gpt-4o', 'gpt-4.1-mini'] },
+    { name: 'DeepSeek',     keySub: 'sk-',     urlMatch: /deepseek\.(com|cn)/,  correct: 'https://api.deepseek.com',                                   models: ['deepseek-chat', 'deepseek-reasoner'] },
+    { name: '通义千问',       keySub: 'sk-',     urlMatch: /aliyuncs\.com|dashscope/, correct: 'https://dashscope.aliyuncs.com/compatible-mode/v1',       models: ['qwen-plus', 'qwen-turbo', 'qwen-max', 'qwen2.5-72b-instruct'] },
+    { name: '硅基流动',       keySub: 'sk-',     urlMatch: /siliconflow\.cn/,    correct: 'https://api.siliconflow.cn/v1',                              models: ['deepseek-ai/DeepSeek-V3', 'Qwen/Qwen2.5-72B-Instruct'] },
+    { name: '智谱AI',        keySub: 'sk-',     urlMatch: /bigmodel\.cn|zhipu/,  correct: 'https://open.bigmodel.cn/api/paas/v4/',                      models: ['glm-4-flash', 'glm-4-plus', 'glm-4-air'] },
+    { name: '月之暗面 Moonshot', keySub: 'sk-', urlMatch: /moonshot\.cn/,        correct: 'https://api.moonshot.cn/v1',                                 models: ['moonshot-v1-8k', 'moonshot-v1-32k'] }
+  ];
+
+  /**
+   * 校验并智能修正 API Base URL
+   * 常见错误：
+   *   - DeepSeek 多加了 /v1 → 去掉
+   *   - OpenAI / 千问 少了 /v1 → 加上
+   *   - 末尾多余 /chat/completions → 去掉
+   *   - 用了平台首页 URL（如 platform.deepseek.com）→ 改成 API 地址
+   *   - HTTP → 强制 HTTPS
+   * @param {string} rawBase 原始 Base URL
+   * @param {string} [modelName] 模型名（可选，用于反推提供商）
+   * @returns {{ corrected: string, warnings: string[], provider: string|null }}
+   */
+  function validateAndFixApiBase(rawBase, modelName) {
+    let base = (rawBase || '').trim().replace(/\/+$/, '');
+    const warnings = [];
+
+    if (!base) return { corrected: '', warnings: ['请填写 API Base URL'], provider: null };
+
+    // 1. 协议：HTTP → HTTPS
+    if (base.startsWith('http://')) {
+      base = 'https://' + base.slice(7);
+      warnings.push('已将 http:// 改为 https://（API 接口要求加密传输）');
+    }
+    if (!base.startsWith('http')) {
+      base = 'https://' + base;
+      warnings.push('URL 缺少协议，已自动补全 https://');
+    }
+
+    // 2. 去掉路径中自带的 /chat/completions、/models 等接口端点
+    const badSuffixes = [
+      '/chat/completions', '/completions', '/v1/chat/completions', '/models',
+      '/api/v1/chat/completions', '/engines', '/v1/models'
+    ];
+    for (const suf of badSuffixes) {
+      if (base.endsWith(suf)) {
+        base = base.slice(0, -suf.length).replace(/\/+$/, '');
+        warnings.push(`已移除末尾多余的 ${suf} 路径`);
+      }
+    }
+
+    // 3. 根据 URL 特征识别提供商，匹配正确的 Base URL
+    const urlLower = base.toLowerCase();
+    let matched = null;
+    for (const p of API_PROVIDER_PRESETS) {
+      if (p.urlMatch.test(urlLower)) { matched = p; break; }
+    }
+    // 也根据模型名反推提供商（注意：不调用 getApiConfig 以避免递归）
+    const modelLower = (modelName || '').toLowerCase();
+    if (!matched && modelLower) {
+      if (modelLower.startsWith('qwen') || modelLower.startsWith('qwen-')) {
+        matched = API_PROVIDER_PRESETS.find(p => p.name === '通义千问');
+      } else if (modelLower.startsWith('deepseek') || modelLower.startsWith('deepseek-')) {
+        matched = API_PROVIDER_PRESETS.find(p => p.name === 'DeepSeek');
+      } else if (modelLower.startsWith('glm')) {
+        matched = API_PROVIDER_PRESETS.find(p => p.name === '智谱AI');
+      } else if (modelLower.startsWith('moonshot')) {
+        matched = API_PROVIDER_PRESETS.find(p => p.name === '月之暗面 Moonshot');
+      }
+    }
+
+    if (matched) {
+      const correctBase = matched.correct.replace(/\/+$/, '');
+      if (base.replace(/\/+$/, '') !== correctBase) {
+        warnings.push(`识别到提供商为「${matched.name}」，Base URL 应改为 ${correctBase}（请对照下方帮助中心检查）`);
+        // 常见额外修正：DeepSeek 去掉错误的 /v1，OpenAI 加上缺少的 /v1
+        if (matched.name === 'DeepSeek' && /\/v\d+$/.test(base)) {
+          base = base.replace(/\/v\d+$/, '');
+        }
+        base = correctBase;
+      }
+    } else {
+      // 通用启发式：看起来像平台首页（含 /app、/docs、platform、www），提醒
+      if (/\/(app|docs?|playground|platform|pricing|about|blog|www)/.test(urlLower) ||
+          urlLower.endsWith('.com') || urlLower.endsWith('.cn') || urlLower.endsWith('.org')) {
+        warnings.push('URL 看起来像平台首页，请确认 API 文档中的 Base URL 地址。常见正确格式：https://api.xxx.com 或 https://xxx.com/v1');
+      }
+    }
+
+    return { corrected: base, warnings, provider: matched ? matched.name : null };
+  }
+
+  // 调用 LLM 基于公司+岗位生成面试题（LLM 训练数据包含网络公开面经）
+  async function searchOnlineQuestions(company, position) {
+    const api = getApiConfig();
+    if (!api.key) throw new Error('NO_API');
+
+    const posInfo = POSITION_BANK[currentPosition] || POSITION_BANK.pm;
+    const posLabel = position || posInfo.label;
+
+    const systemPrompt = `你是一位资深面试官，熟悉互联网公司的面试流程和常考题。请基于你掌握的网络公开面经（包括牛客网、看准网、脉脉、知乎等平台上候选人分享的真实面试经验），为「${company || '某互联网公司'}」的「${posLabel}」岗位生成 12 道真实度高的面试题。
+
+要求：
+1. 题目应尽量贴合「${company || '该公司'}」的实际面试风格和业务场景（如字节重视数据、腾讯重视产品思维、阿里重视业务理解等）
+2. 题目应覆盖该岗位面试的常见环节：专业基础、项目深挖、行为面试、情景题、压力题等
+3. 题目应来源于真实的网络面经，不要凭空编造过于离谱的题目
+4. 每道题尽量标注来源平台（如"牛客网面经"、"看准网面经"、"脉脉面经"等）
+
+输出格式（严格 JSON 数组）：
+[{"q":"面试题内容","dim":"维度key","source":"来源平台"}]
+dim 取值为：professional, expression, logic, emotion, confidence
+source 取值为：牛客网、看准网、脉脉、知乎、小红书、其他
+
+只输出 JSON 数组，不要任何其他文字。`;
+
+    const url = api.base.replace(/\/$/, '') + '/chat/completions';
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + api.key },
+      body: JSON.stringify({
+        model: api.model || 'gpt-4o-mini',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: `公司：${company || '某互联网公司'}\n岗位：${posLabel}\n\n请生成 12 道基于网络公开面经的真实面试题。` }
+        ],
+        temperature: 0.7
+      })
+    });
+    // 安全解析：避免 res.json() 遇到 HTML 抛 "Unexpected token '<'"
+    const data = await safeReadJSON(res);
+    const content = data.choices?.[0]?.message?.content || '';
+    const jsonMatch = content.match(/\[[\s\S]*\]/);
+    if (!jsonMatch) throw new Error('AI 返回内容解析失败');
+    const questions = JSON.parse(jsonMatch[0]).map((q, i) => ({
+      id: i + 1,
+      q: q.q,
+      dim: q.dim || 'logic',
+      source: q.source || '网络面经'
+    }));
+    if (!questions.length) throw new Error('AI 未生成有效题目');
+    return questions;
+  }
+
   // --- UI Render ---
+  function renderPositionSelector() {
+    const container = $('#positionSelector');
+    if (!container) return;
+    container.innerHTML = Object.keys(POSITION_BANK).map(id => {
+      const pos = POSITION_BANK[id];
+      const active = id === currentPosition ? ' active' : '';
+      return `<button type="button" class="position-chip${active}" data-pos="${id}" title="${pos.desc}">
+        <span class="position-icon">${pos.icon}</span>
+        <span class="position-label">${pos.label}</span>
+      </button>`;
+    }).join('');
+  }
+
   function renderQuickChips() {
     const container = $('#quickChips');
-    container.innerHTML = QUICK_QUESTIONS.map(q =>
-      `<button type="button" class="chip" data-q="${q}">${q}</button>`
+    // 基础快速选题（来自当前职位）
+    let chipsHtml = QUICK_QUESTIONS.map(q =>
+      `<button type="button" class="chip" data-q="${escapeHtml(q)}">${escapeHtml(q)}</button>`
     ).join('');
-    container.addEventListener('click', (e) => {
+    // 若存在联网题库，追加几道面经题作为快捷选项
+    const bank = getOnlineBank();
+    if (bank.questions && bank.questions.length) {
+      const onlineChips = bank.questions.slice(0, 4).map(q =>
+        `<button type="button" class="chip chip-online" data-q="${escapeHtml(q.q)}" title="来自${escapeHtml(q.source || '网络面经')}">🌐 ${escapeHtml(q.q.length > 18 ? q.q.slice(0, 18) + '…' : q.q)}</button>`
+      ).join('');
+      chipsHtml += `<div class="chip-divider">📚 ${escapeHtml(bank.company || '')} ${escapeHtml(bank.position || '')} 面经题</div>` + onlineChips;
+    }
+    container.innerHTML = chipsHtml;
+    container.onclick = (e) => {
       const chip = e.target.closest('.chip');
       if (!chip) return;
       $$('#quickChips .chip').forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
       $('#questionInput').value = chip.dataset.q;
-    });
+    };
   }
 
   function renderCategoryFilters() {
@@ -4532,6 +5408,28 @@ ${profile.resumeRaw}`;
     $('#jobRequirements').value = profile.jobRequirements || '';
     updateJobTargetSummary();
 
+    // 学生基本信息
+    $('#stuSchool').value = profile.school || '';
+    $('#stuMajor').value = profile.major || '';
+    $('#stuGrade').value = profile.grade || '';
+    $('#stuGpa').value = profile.gpa || '';
+    $('#stuRank').value = profile.rank || '';
+    $('#stuCourses').value = profile.courses || '';
+    $('#stuClubs').value = profile.clubs || '';
+    $('#stuCompetitions').value = profile.competitions || '';
+    $('#stuInternships').value = profile.internships || '';
+    ['stuCourses','stuClubs','stuCompetitions','stuInternships'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) autoResizeTextarea(el);
+    });
+
+    // 联网题库搜索框：默认填充 profile 中的公司和岗位
+    const bank = getOnlineBank();
+    $('#searchCompany').value = bank.company || profile.jobCompany || '';
+    $('#searchPosition').value = bank.position || profile.target || '';
+    renderExternalLinks();
+    renderOnlineResults();
+
     const api = getApiConfig();
     $('#apiKey').value = api.key || '';
     $('#apiModel').value = api.model || 'gpt-4o-mini';
@@ -4553,7 +5451,11 @@ ${profile.resumeRaw}`;
   });
 
   $$('.mode-btn').forEach(btn => {
-    btn.addEventListener('click', () => setMode(btn.dataset.mode));
+    btn.addEventListener('click', () => {
+      setMode(btn.dataset.mode);
+      // 用户主动切换到 agent 模式时检查一次服务状态
+      if (btn.dataset.mode === 'agent') checkServerHealth();
+    });
   });
 
   $('#generateBtn').addEventListener('click', generateAnswer);
@@ -4598,21 +5500,143 @@ ${profile.resumeRaw}`;
   $('#jobCompany').addEventListener('input', () => { saveJobTarget(); updateJobTargetSummary(); });
   $('#jobRequirements').addEventListener('input', () => { saveJobTarget(); updateJobTargetSummary(); });
 
+  // 学生基本信息：自动保存 + 手动保存
+  const STUDENT_FIELDS = ['stuSchool','stuMajor','stuGrade','stuGpa','stuRank','stuCourses','stuClubs','stuCompetitions','stuInternships'];
+  const STUDENT_KEY_MAP = {
+    stuSchool:'school', stuMajor:'major', stuGrade:'grade', stuGpa:'gpa', stuRank:'rank',
+    stuCourses:'courses', stuClubs:'clubs', stuCompetitions:'competitions', stuInternships:'internships'
+  };
+  function saveStudentInfo() {
+    const profile = getProfile();
+    STUDENT_FIELDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) profile[STUDENT_KEY_MAP[id]] = el.value.trim();
+    });
+    saveJSON(STORAGE.profile, profile);
+  }
+  function showStudentInfoStatus(msg) {
+    const el = $('#studentInfoStatus');
+    if (el) el.textContent = msg;
+  }
+  // 自动保存
+  STUDENT_FIELDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('input', () => {
+      if (el.tagName === 'TEXTAREA') autoResizeTextarea(el);
+      saveStudentInfo();
+    });
+  });
+  $('#saveStudentInfoBtn').addEventListener('click', () => {
+    saveStudentInfo();
+    showStudentInfoStatus('✓ 已保存 ' + new Date().toLocaleTimeString('zh-CN'));
+    showToast('学生信息已保存');
+  });
+  $('#clearStudentInfoBtn').addEventListener('click', () => {
+    if (!confirm('确定清空所有学生基本信息吗？此操作不可撤销。')) return;
+    STUDENT_FIELDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) { el.value = ''; autoResizeTextarea(el); }
+    });
+    saveStudentInfo();
+    showStudentInfoStatus('已清空');
+    showToast('已清空学生信息');
+  });
+
+  // ===== 联网题库事件 =====
+  // 输入公司/岗位时联动外部链接，并同步到 profile
+  function syncOnlineSearchToProfile() {
+    const profile = getProfile();
+    const c = $('#searchCompany').value.trim();
+    const p = $('#searchPosition').value.trim();
+    if (c) profile.jobCompany = c;
+    if (p) profile.target = p;
+    saveJSON(STORAGE.profile, profile);
+  }
+  $('#searchCompany').addEventListener('input', () => { renderExternalLinks(); syncOnlineSearchToProfile(); });
+  $('#searchPosition').addEventListener('input', () => { renderExternalLinks(); syncOnlineSearchToProfile(); });
+
+  // 搜索按钮：调 LLM 生成公司面试题
+  $('#searchOnlineBtn').addEventListener('click', async () => {
+    const api = getApiConfig();
+    const company = $('#searchCompany').value.trim();
+    const position = $('#searchPosition').value.trim();
+    const status = $('#onlineSearchStatus');
+
+    if (!api.key) {
+      showToast('请先在「AI API 配置」中填写 API Key');
+      status.textContent = '⚠️ 未配置 API，无法联网搜索';
+      return;
+    }
+    if (!company && !position) {
+      showToast('请输入公司或岗位');
+      return;
+    }
+
+    const btn = $('#searchOnlineBtn');
+    btn.disabled = true;
+    btn.textContent = '🔍 搜索中…';
+    status.textContent = '⏳ 正在基于网络公开面经生成面试题…';
+
+    try {
+      const questions = await searchOnlineQuestions(company, position);
+      saveOnlineBank({
+        company,
+        position,
+        questions,
+        time: new Date().toLocaleString('zh-CN')
+      });
+      renderOnlineResults();
+      renderQuickChips();  // 刷新智能练习的快速选题
+      status.textContent = `✓ 已生成 ${questions.length} 道面试题，已融入智能练习和模拟面试`;
+      showToast(`已搜索到 ${questions.length} 道面试题`);
+    } catch (e) {
+      status.textContent = '✕ 搜索失败：' + (e.message || '未知错误');
+      showToast('搜索失败：' + e.message);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '🔍 联网搜索面试题';
+    }
+  });
+
+  // 清空联网题库
+  $('#clearOnlineBtn').addEventListener('click', () => {
+    if (!confirm('确定清空联网题库吗？清空后智能练习和模拟面试将回退到内置题库。')) return;
+    saveOnlineBank({ company: '', position: '', questions: [], time: '' });
+    renderOnlineResults();
+    $('#onlineSearchStatus').textContent = '已清空联网题库';
+    showToast('已清空联网题库');
+  });
+
   $('#saveApiBtn').addEventListener('click', () => {
+    const rawBase = $('#apiBase').value.trim() || 'https://api.openai.com/v1';
+    const model = $('#apiModel').value.trim() || 'gpt-4o-mini';
+    const { corrected, warnings } = validateAndFixApiBase(rawBase, model);
+    // 自动回填修正后的 URL
+    if (corrected.replace(/\/+$/, '') !== rawBase.replace(/\/+$/, '')) {
+      $('#apiBase').value = corrected;
+    }
     saveJSON(STORAGE.api, {
       key: $('#apiKey').value.trim(),
       model: $('#apiModel').value.trim() || 'gpt-4o-mini',
-      base: $('#apiBase').value.trim() || 'https://api.openai.com/v1'
+      base: corrected
     });
-    showToast('API 配置已保存');
+    if (warnings && warnings.length) {
+      showToast('已保存：' + warnings[0]);
+    } else {
+      showToast('API 配置已保存');
+    }
   });
 
   // API 配置输入时自动保存，确保 generateAnswer 能读到最新值
   const autoSaveApi = () => {
+    const rawBase = $('#apiBase').value.trim() || 'https://api.openai.com/v1';
+    const model = $('#apiModel').value.trim() || 'gpt-4o-mini';
+    const { corrected } = validateAndFixApiBase(rawBase, model);
     saveJSON(STORAGE.api, {
       key: $('#apiKey').value.trim(),
       model: $('#apiModel').value.trim() || 'gpt-4o-mini',
-      base: $('#apiBase').value.trim() || 'https://api.openai.com/v1'
+      base: corrected || rawBase
     });
   };
   $('#apiKey').addEventListener('input', autoSaveApi);
@@ -4816,12 +5840,30 @@ ${profile.resumeRaw}`;
   $('#testApiBtn').addEventListener('click', async () => {
     const key = $('#apiKey').value.trim();
     const model = $('#apiModel').value.trim() || 'gpt-4o-mini';
-    const base = ($('#apiBase').value.trim() || 'https://api.openai.com/v1').replace(/\/$/, '');
+    const rawBase = $('#apiBase').value.trim() || 'https://api.openai.com/v1';
     if (!key) { showToast('请先填写 API Key'); return; }
 
+    // 1. 先校验 Base URL
+    const { corrected, warnings, provider } = validateAndFixApiBase(rawBase, model);
+    let msgLines = [];
+    if (warnings.length) {
+      msgLines = msgLines.concat(warnings.map(w => '⚠️ ' + w));
+      // 如果与原值不同，自动回填修正后的值
+      if (corrected.replace(/\/+$/, '') !== rawBase.replace(/\/+$/, '')) {
+        $('#apiBase').value = corrected;
+      }
+    }
+
+    const base = corrected;
+    const fullUrl = base + '/chat/completions';
+    msgLines.push(`请求地址：${fullUrl}`);
+    if (provider) msgLines.push(`识别到提供商：${provider}`);
+
     $('#testApiBtn').disabled = true;
+    const originalText = $('#testApiBtn').textContent;
+    $('#testApiBtn').textContent = '🔄 测试中…';
     try {
-      const res = await fetch(base + '/chat/completions', {
+      const res = await fetch(fullUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -4833,12 +5875,98 @@ ${profile.resumeRaw}`;
           max_tokens: 10
         })
       });
-      if (res.ok) showToast('API 连接成功 ✓');
-      else showToast('连接失败：HTTP ' + res.status);
+
+      const text = await res.text();
+      const contentType = res.headers.get('Content-Type') || '';
+
+      if (!res.ok) {
+        // 特殊：返回 HTML（URL 错了，重定向到网页）
+        if (contentType.includes('text/html') || text.trim().startsWith('<') || text.includes('<!DOCTYPE')) {
+          msgLines.push('❌ API 返回了 HTML 网页而非 JSON，说明 Base URL 地址错误');
+          msgLines.push('');
+          msgLines.push('💡 请检查 API Base URL：');
+          msgLines.push('   - DeepSeek 正确值：https://api.deepseek.com（不要加 /v1）');
+          msgLines.push('   - OpenAI 正确值：https://api.openai.com/v1');
+          msgLines.push('   - 千问 正确值：https://dashscope.aliyuncs.com/compatible-mode/v1');
+          msgLines.push('   - 硅基流动 正确值：https://api.siliconflow.cn/v1');
+          msgLines.push('');
+          msgLines.push('💡 也可能是：代理/VPN 干扰、网络被墙、URL 指向了管理后台而非 API 域名');
+          showToast('连接失败：返回 HTML，请检查 Base URL');
+        } else if (res.status === 401) {
+          msgLines.push('❌ 401 Unauthorized：API Key 无效或已过期');
+          msgLines.push('💡 请检查 Key 是否正确、是否已复制完整、是否余额充足');
+          showToast('连接失败：API Key 无效 (401)');
+        } else if (res.status === 402) {
+          msgLines.push('❌ 402 Payment Required：账户余额不足 / 需要付费');
+          msgLines.push('💡 请登录 API 提供商平台充值或领取免费额度：');
+          msgLines.push('   - DeepSeek：https://platform.deepseek.com/usage（初次注册有赠送额度）');
+          msgLines.push('   - OpenAI：https://platform.openai.com/usage（需绑定信用卡）');
+          msgLines.push('   - 千问：https://bailian.console.aliyun.com/（新用户有免费额度）');
+          msgLines.push('   - 硅基流动：https://cloud.siliconflow.cn/（新用户送 14 元）');
+          msgLines.push(`💡 响应内容前 200 字：${text.slice(0, 200)}`);
+          showToast('连接失败：余额不足 (402)，请充值');
+        } else if (res.status === 400) {
+          msgLines.push('❌ 400 Bad Request：请求格式错误');
+          msgLines.push(`💡 响应内容前 300 字：${text.slice(0, 300)}`);
+          msgLines.push('');
+          msgLines.push('💡 常见原因：');
+          msgLines.push('   1) 模型名为空或错误 → 当前模型：「' + model + '」');
+          if (provider) {
+            const preset = API_PROVIDER_PRESETS.find(p => p.name === provider);
+            if (preset) msgLines.push('   ' + provider + ' 推荐模型：' + preset.models.join('、'));
+          }
+          msgLines.push('   2) 请求参数缺失（messages 数组、model 字段）');
+          msgLines.push('   3) Base URL 路径不对（如 DeepSeek 应为 https://api.deepseek.com）');
+          msgLines.push('   4) 模型不支持 max_tokens 参数（去掉重试）');
+          showToast('连接失败：请求格式错误 (400)，请看控制台详情');
+        } else if (res.status === 404) {
+          msgLines.push('❌ 404 Not Found：模型名或 URL 路径错误');
+          msgLines.push(`💡 响应内容前 200 字：${text.slice(0, 200)}`);
+          if (provider) {
+            const preset = API_PROVIDER_PRESETS.find(p => p.name === provider);
+            if (preset) msgLines.push(`💡 ${provider} 推荐模型：${preset.models.join('、')}`);
+          }
+          showToast('连接失败：404 模型名或路径错误');
+        } else {
+          msgLines.push(`❌ HTTP ${res.status}：${text.slice(0, 200)}`);
+          showToast('连接失败：HTTP ' + res.status);
+        }
+        console.warn('[API测试失败]\n' + msgLines.join('\n'));
+        return;
+      }
+
+      // 成功
+      let parsedOk = false;
+      try {
+        const data = JSON.parse(text);
+        const reply = data.choices?.[0]?.message?.content?.slice(0, 30) || '';
+        const tokens = data.usage?.total_tokens || 0;
+        parsedOk = true;
+        msgLines.push(`✅ API 连接成功！模型返回：${reply || '(空)'}，总 tokens：${tokens}`);
+      } catch {
+        if (contentType.includes('text/html') || text.includes('<!DOCTYPE')) {
+          msgLines.push('⚠️ HTTP 200 但返回 HTML，可能是 DNS 劫持或代理返回了页面');
+        } else {
+          msgLines.push('✅ HTTP 200 但响应非标准 JSON，继续尝试调用…');
+        }
+      }
+      showToast(parsedOk ? 'API 连接成功 ✓' : '连接成功但响应非标准');
+      console.log('[API测试成功]\n' + msgLines.join('\n'));
     } catch (e) {
-      showToast('连接失败：' + e.message);
+      if (e.message && e.message.includes('Failed to fetch')) {
+        msgLines.push('❌ 网络错误：无法连接到服务器');
+        msgLines.push('💡 请检查：');
+        msgLines.push('   1) 是否在 file:// 协议下打开（跨域限制）→ 用 http://localhost:3458 启动本地服务器');
+        msgLines.push('   2) Base URL 是否能正常访问（是否需翻墙）');
+        msgLines.push('   3) 浏览器扩展/代理/VPN 是否拦截了请求');
+      } else {
+        msgLines.push('❌ ' + (e.message || e));
+      }
+      showToast('连接失败：' + (e.message || '未知错误'));
+      console.warn('[API测试异常]\n' + msgLines.join('\n'));
     } finally {
       $('#testApiBtn').disabled = false;
+      $('#testApiBtn').textContent = originalText;
     }
   });
 
@@ -4943,13 +6071,26 @@ ${profile.resumeRaw}`;
   renderHistory();
   loadSettingsToForm();
   initAutoResize();
+  // 渲染职位选择器并绑定事件
+  renderPositionSelector();
+  $('#positionSelector').addEventListener('click', (e) => {
+    const chip = e.target.closest('.position-chip');
+    if (!chip) return;
+    switchPosition(chip.dataset.pos);
+    showToast('已切换到「' + POSITION_BANK[chip.dataset.pos].label + '」题库');
+  });
+  // 根据持久化的职位初始化标题
+  (function initPositionTitle() {
+    const pos = POSITION_BANK[currentPosition];
+    if (pos) {
+      const head = document.querySelector('#panel-bank .page-head p');
+      if (head) head.textContent = `${pos.icon} ${pos.label} · ${pos.desc}，点击即可练习`;
+    }
+  })();
   // 加载后自动调整 textarea 高度
   setTimeout(() => {
     ['jobRequirements'].forEach(id => autoResizeTextarea(document.getElementById(id)));
   }, 100);
-  setMode(currentMode);
-  checkServerHealth();
-  setInterval(checkServerHealth, 15000);
 
   // 线上环境（GitHub Pages 等）无法运行本地 Agent 服务，隐藏 Agent 入口
   const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
@@ -4974,6 +6115,14 @@ ${profile.resumeRaw}`;
       currentMode = 'quick';
       localStorage.setItem(STORAGE.mode, 'quick');
     }
+  }
+
+  // 只有在本地环境且当前是 agent 模式时才检查 Agent 服务健康
+  // 非 agent 模式完全不检查，避免 ERR_CONNECTION_REFUSED 控制台噪音
+  setMode(currentMode);
+  if ((isLocal || isFile) && currentMode === 'agent') {
+    checkServerHealth();
+    setInterval(checkServerHealth, 15000);
   }
 })();
 </script>
