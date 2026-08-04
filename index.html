@@ -2263,6 +2263,32 @@ textarea { resize: vertical; min-height: 88px; }
     };
   }
 
+  // 健康检查轮询控制：连续失败后停止轮询，避免 ERR_CONNECTION_REFUSED 日志刷屏
+  let healthCheckFailures = 0;
+  let healthCheckTimer = null;
+  const HEALTH_CHECK_MAX_FAILURES = 2;
+
+  function startHealthPolling() {
+    stopHealthPolling();
+    healthCheckFailures = 0;
+    checkServerHealth();
+    healthCheckTimer = setInterval(async () => {
+      // 连续失败超过阈值则停止轮询，等用户主动操作
+      if (healthCheckFailures >= HEALTH_CHECK_MAX_FAILURES) {
+        stopHealthPolling();
+        return;
+      }
+      await checkServerHealth();
+    }, 15000);
+  }
+
+  function stopHealthPolling() {
+    if (healthCheckTimer) {
+      clearInterval(healthCheckTimer);
+      healthCheckTimer = null;
+    }
+  }
+
   async function checkServerHealth() {
     const url = getServerUrl();
     const el = $('#serverStatus');
@@ -2273,11 +2299,13 @@ textarea { resize: vertical; min-height: 88px; }
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
       serverOnline = true;
+      healthCheckFailures = 0; // 成功则重置失败计数
       el.classList.remove('offline');
       el.classList.add('online');
       text.textContent = 'Agent 服务已连接 · ' + (data.tools ? data.tools.length : 6) + ' 个工具';
     } catch {
       serverOnline = false;
+      healthCheckFailures++;
       el.classList.remove('online');
       el.classList.add('offline');
       text.textContent = 'Agent 服务未连接（' + url + '）';
@@ -5453,8 +5481,12 @@ source 取值为：牛客网、看准网、脉脉、知乎、小红书、其他
   $$('.mode-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       setMode(btn.dataset.mode);
-      // 用户主动切换到 agent 模式时检查一次服务状态
-      if (btn.dataset.mode === 'agent') checkServerHealth();
+      // 用户主动切换到 agent 模式时启动健康检查轮询；切到其他模式则停止
+      if (btn.dataset.mode === 'agent') {
+        startHealthPolling();
+      } else {
+        stopHealthPolling();
+      }
     });
   });
 
@@ -5660,8 +5692,8 @@ source 取值为：牛客网、看准网、脉脉、知乎、小红书、其他
     log.textContent = '正在启动 Agent 服务...\n';
     $('#startAgentBtn').disabled = true;
     try {
-      // 先检查启动器是否在线
-      const healthCheck = await fetch(url + '/health', { signal: AbortSignal.timeout(3000) });
+      // 先检查启动器是否在线（不使用 AbortSignal 避免 ERR_ABORTED 日志）
+      const healthCheck = await fetch(url + '/health');
       if (!healthCheck.ok) throw new Error('启动器响应异常');
       const healthData = await healthCheck.json();
       if (healthData.running && healthData.agentOnline) {
@@ -5679,7 +5711,7 @@ source 取值为：牛客网、看准网、脉脉、知乎、小红书、其他
       for (let i = 0; i < 15; i++) {
         await new Promise(r => setTimeout(r, 1000));
         try {
-          const hRes = await fetch(getServerUrl() + '/api/health', { signal: AbortSignal.timeout(2000) });
+          const hRes = await fetch(getServerUrl() + '/api/health');
           if (hRes.ok) {
             log.textContent += '✓ Agent 服务已就绪 (端口 ' + (getServerUrl().match(/:(\d+)/)?.[1] || '3456') + ')\n';
             checkServerHealth();
@@ -5709,29 +5741,60 @@ source 取值为：牛客网、看准网、脉脉、知乎、小红书、其他
     log.textContent = '正在停止 Agent 服务...\n';
     $('#stopAgentBtn').disabled = true;
     try {
-      const res = await fetch(url + '/stop', { method: 'POST', signal: AbortSignal.timeout(5000) });
+      const res = await fetch(url + '/stop', { method: 'POST' });
       const data = await res.json();
       log.textContent += '✓ ' + (data.status === 'stopped' ? 'Agent 服务已停止' : data.message || '已发送停止指令') + '\n';
       serverOnline = false;
-      checkServerHealth();
-      updateLauncherStatus();
+      // 仅在停止成功时才更新状态，避免失败时连锁产生 ERR_CONNECTION_REFUSED 日志
+      const el = $('#serverStatus');
+      const text = $('#serverStatusText');
+      if (el && text) {
+        el.classList.remove('online');
+        el.classList.add('offline');
+        text.textContent = 'Agent 服务已停止';
+      }
+      const launcherEl = $('#launcherStatus');
+      if (launcherEl) {
+        launcherEl.textContent = '○ Agent 已停止';
+        launcherEl.style.color = '#dc2626';
+      }
     } catch (e) {
-      log.textContent += '✕ 停止失败：' + e.message + '\n';
+      const isConnRefused = e.message.includes('Failed to fetch') || e.message.includes('connect');
+      const hint = isConnRefused
+        ? '（启动器未运行，Agent 服务本就未启动，无需停止）'
+        : '';
+      log.textContent += '✕ 停止失败：' + e.message + hint + '\n';
+      // 连接被拒绝说明启动器没运行，直接设置 UI 为未连接，不再发额外请求
+      if (isConnRefused) {
+        const launcherEl = $('#launcherStatus');
+        if (launcherEl) {
+          launcherEl.textContent = '✕ 启动器未连接';
+          launcherEl.style.color = '#dc2626';
+        }
+      }
     } finally {
       $('#stopAgentBtn').disabled = false;
     }
   });
 
   $('#checkAgentBtn').addEventListener('click', async () => {
+    // 用户主动刷新，重置失败计数并重新检查
+    healthCheckFailures = 0;
     updateLauncherStatus();
     checkServerHealth();
+    // 如果当前是 agent 模式且轮询已停止，则恢复轮询
+    if (currentMode === 'agent' && !healthCheckTimer) {
+      startHealthPolling();
+    }
     showToast('状态已刷新');
   });
 
   function updateLauncherStatus() {
     const url = getLauncherUrl();
     const el = $('#launcherStatus');
-    fetch(url + '/health', { signal: AbortSignal.timeout(2000) })
+    // 不使用 AbortSignal.timeout 避免 ERR_ABORTED 控制台日志
+    // 服务器未启动时 fetch 会自然 reject，被 catch 静默处理
+    fetch(url + '/health')
       .then(r => r.json())
       .then(data => {
         const running = data.running || false;
@@ -6117,12 +6180,20 @@ source 取值为：牛客网、看准网、脉脉、知乎、小红书、其他
     }
   }
 
-  // 只有在本地环境且当前是 agent 模式时才检查 Agent 服务健康
-  // 非 agent 模式完全不检查，避免 ERR_CONNECTION_REFUSED 控制台噪音
+  // 初始化时不再自动发起 Agent 服务健康检查。
+  // ERR_CONNECTION_REFUSED 是浏览器网络层日志（端口无服务时强制记录），
+  // JS 的 try/catch 无法拦截。页面加载时 Agent 服务通常未启动，
+  // 自动检查只会产生控制台噪音，UI 默认显示「未连接」即可。
+  // 用户主动切换到 agent 模式或点击「检查状态/启动」时才发起请求。
   setMode(currentMode);
   if ((isLocal || isFile) && currentMode === 'agent') {
-    checkServerHealth();
-    setInterval(checkServerHealth, 15000);
+    // 仅更新 UI 状态为「未连接」，不发起网络请求
+    const el = $('#serverStatus');
+    const text = $('#serverStatusText');
+    if (el && text) {
+      el.classList.add('offline');
+      text.textContent = 'Agent 服务未连接（' + getServerUrl() + '）· 点击「检查状态」刷新';
+    }
   }
 })();
 </script>
